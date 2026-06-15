@@ -1,0 +1,6 @@
+.DS_Store
+.gocache/
+dist/
+release/
+*.tar.gz
+uncut

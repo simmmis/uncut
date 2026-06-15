@@ -1,0 +1,155 @@
+.TH UNCUT 1 "June 2026" "uncut 0.2.3" "User Commands"
+.SH NAME
+uncut \- standalone console client for the Uncutt Cards API
+.SH SYNOPSIS
+.B uncut
+.I command
+[
+.I target
+]
+[
+.I options
+]
+.SH DESCRIPTION
+.B uncut
+is a standalone command line client for Uncutt wallet and virtual card
+operations. It stores an API key locally, calls the Cards API directly, and does
+not require Node.js, Go, npm, or curl at runtime.
+.SH AUTH COMMANDS
+.TP
+.B uncut login
+Prompt for an API key and save it locally.
+.TP
+.B uncut logout
+Remove the saved API key.
+.TP
+.B uncut config
+Show config status without printing the full key or endpoint.
+.SH WALLET COMMANDS
+.TP
+.B uncut balance
+Show wallet balance.
+.TP
+.B uncut deposit
+Show USDT deposit addresses.
+.TP
+.B uncut wallet [--page N|--all]
+Show wallet transaction history, newest first.
+.SH CARD COMMANDS
+.TP
+.B uncut bins
+List available card BINs, supported currencies, and fees.
+.TP
+.B uncut new BIN_ID [--name NAME] [--currency CODE] [--topup AMOUNT] [--3ds --phone PHONE] [--wait]
+Create a new card asynchronously. Defaults: generated name, USD currency, zero
+initial top-up. The command checks existing cards and refuses duplicate names
+before sending the create request.
+.TP
+.B uncut cards [--reveal]
+List cards. Without --reveal, full PAN/CVV is hidden.
+.TP
+.B uncut card CARD_ID [--reveal]
+Show one card. With --reveal, full PAN/CVV is shown.
+.TP
+.B uncut topup CARD_ID --amount AMOUNT [--wait]
+Move wallet funds to a card asynchronously. The amount can also be positional:
+uncut topup CARD_ID AMOUNT --wait.
+.TP
+.B uncut withdraw CARD_ID --amount AMOUNT [--wait]
+Move card funds back to wallet asynchronously.
+.TP
+.B uncut transactions CARD_ID [--page N|--all]
+Show card transactions, newest first.
+.TP
+.B uncut rename CARD_ID NAME
+Rename a card.
+.TP
+.B uncut phone CARD_ID --phone PHONE
+Update the 3DS phone number.
+.TP
+.B uncut freeze CARD_ID
+Freeze a card.
+.TP
+.B uncut unfreeze CARD_ID
+Unfreeze a card.
+.TP
+.B uncut delete CARD_ID [--yes]
+Close a card and refund remaining balance. Without --yes, asks for
+confirmation.
+.SH OPERATION COMMANDS
+.TP
+.B uncut operation OPERATION_ID
+Show asynchronous operation status.
+.TP
+.B uncut wait OPERATION_ID [--interval SECONDS] [--timeout SECONDS]
+Poll until an operation is completed, failed, or timed out.
+.SH HELP
+.TP
+.B uncut help COMMAND
+Show command-specific help and examples. For card and BIN commands, examples
+include current account ids when available.
+.SH OPTIONS
+.TP
+.B --json
+Print JSON instead of formatted text for API commands.
+.TP
+.B --reveal, --full
+Reveal PAN/CVV for card commands.
+.TP
+.B --page N
+Request a paginated page.
+.TP
+.B --all
+Fetch all paginated pages.
+.TP
+.B --wait
+Wait for asynchronous card creation, top-up, or withdrawal.
+.TP
+.B --yes
+Confirm destructive actions.
+.TP
+.B -h, --help
+Show help.
+.TP
+.B -v, --version
+Show version.
+.SH ENVIRONMENT
+.TP
+.B UNCUT_API_KEY
+API key used before the local config file.
+.TP
+.B UNCUT_BASE_URL
+API endpoint used before the local config file.
+.SH FILES
+.TP
+.B ~/.config/uncut/config.json
+Local config file containing the saved API key and endpoint. It is written with
+0600 permissions.
+.SH EXAMPLES
+.nf
+uncut login
+uncut balance
+uncut deposit
+uncut bins
+uncut cards
+uncut card card_demo_ads --reveal
+uncut new bin_demo_ads --wait
+uncut new bin_demo_ads --name "Facebook Ads" --currency USD --topup 25 --wait
+uncut topup card_demo_ads --amount 60 --wait
+uncut help topup
+uncut transactions card_demo_ads --page 2
+uncut delete card_demo_ads --yes
+.fi
+.SH EXIT STATUS
+.TP
+.B 0
+Success.
+.TP
+.B 1
+API or runtime error.
+.TP
+.B 2
+Usage error.
+.TP
+.B 3
+Missing API key.

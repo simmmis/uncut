@@ -27,12 +27,41 @@ cli_v1/
   METHODS.md
   IMPLEMENTATION.md
   ROADMAP.md
+  docs/
   man/uncut.1
   dist/uncut
 ```
 
 The implementation is currently one `main.go` file. Once command behavior
 stabilizes, split it into packages for API, config, output, and command parsing.
+
+## Embedded documentation
+
+The binary embeds the markdown docs and man page source through Go `embed`.
+
+Installed users can read docs without the repository checkout:
+
+```sh
+uncut help
+uncut help new
+uncut docs --list
+uncut docs topup
+uncut docs errors
+uncut man
+```
+
+Release archives must include:
+
+```text
+uncut
+README.md
+METHODS.md
+docs/
+man/uncut.1
+```
+
+The Homebrew formula installs `uncut` to `bin`, `man/uncut.1` to `man1`, and the
+markdown docs to `share/doc/uncut`.
 
 ## Runtime dependencies
 

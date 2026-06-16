@@ -8,6 +8,21 @@ are required.
 
 ## Quick Start
 
+Install with Homebrew:
+
+```sh
+brew install simmmis/tap/uncut
+```
+
+After installation, `uncut` is available from any new terminal where Homebrew is
+on `PATH`:
+
+```sh
+uncut --version
+uncut login
+uncut balance
+```
+
 From this repository:
 
 ```sh
@@ -176,14 +191,21 @@ your current card ids and BIN ids.
 | [`delete`](docs/commands/delete.md) | Close a card and refund balance |
 | [`operation`](docs/commands/operation.md) | Show async operation status |
 | [`wait`](docs/commands/wait.md) | Poll async operation status |
+| [`docs`](docs/commands/docs.md) | Print embedded markdown docs |
+| [`man`](docs/commands/man.md) | Print the built-in manual |
 
-## Built-In Help
+## Built-In Help And Manuals
 
-Every command supports examples:
+The binary is self-documenting. This matters for installed users and automation
+agents that do not have the source repository checkout.
 
 ```sh
+uncut help
 uncut help <command>
 uncut <command> --help
+uncut man
+uncut docs --list
+uncut docs <command>
 ```
 
 Examples:
@@ -192,6 +214,16 @@ Examples:
 uncut help topup
 uncut help transactions
 uncut help new
+uncut docs cards
+uncut docs errors
+uncut man
+```
+
+Homebrew installs the system man page and markdown docs:
+
+```sh
+man uncut
+ls "$(brew --prefix uncut)/share/doc/uncut"
 ```
 
 ## JSON Mode

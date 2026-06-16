@@ -1,4 +1,4 @@
-.TH UNCUT 1 "June 2026" "uncut 0.1.1" "User Commands"
+.TH UNCUT 1 "June 16, 2026" "uncut 0.1.2" "User Commands"
 .SH NAME
 uncut \- standalone console client for the Uncutt Cards API
 .SH SYNOPSIS
@@ -10,93 +10,166 @@ uncut \- standalone console client for the Uncutt Cards API
 [
 .I options
 ]
+.br
+.B uncut help
+[
+.I command
+]
+.br
+.B uncut docs
+[
+.I topic
+]
+.br
+.B uncut man
+[
+.I topic
+]
 .SH DESCRIPTION
 .B uncut
-is a standalone command line client for Uncutt wallet and virtual card
-operations. It stores an API key and API endpoint locally, calls the Cards API
-directly, and does not require Node.js, Go, npm, or curl at runtime.
+manages Uncutt wallet and virtual-card operations from a terminal. It is a
+standalone Go binary and does not require Go, Node.js, npm, curl, or external
+runtime packages.
+.PP
+There is no compiled default API endpoint. The first login prompts for both an
+API key and an API endpoint. Both values are private local configuration.
+.SH FIRST RUN
+.nf
+uncut login
+uncut config
+uncut balance
+uncut bins
+uncut cards
+.fi
+.PP
+.B uncut login
+prompts for:
+.nf
+Enter API key:
+Enter API endpoint:
+.fi
+.PP
+The values are saved to
+.B ~/.config/uncut/config.json
+with 0600 permissions.
 .SH AUTH COMMANDS
 .TP
 .B uncut login
 Prompt for an API key and API endpoint and save them locally.
 .TP
 .B uncut logout
-Remove the saved API key.
+Remove saved local credentials.
 .TP
 .B uncut config
 Show config status without printing the full key or endpoint.
 .SH WALLET COMMANDS
 .TP
-.B uncut balance [--raw]
-Show wallet balance.
+.B uncut balance [--raw|--json]
+Show wallet balance. With
+.B --raw
+prints only the numeric balance, for example 84.8.
 .TP
-.B uncut deposit [--raw]
+.B uncut deposit [--raw|--json]
 Show USDT deposit addresses.
 .TP
-.B uncut wallet [--page N|--all] [--raw]
+.B uncut wallet [--page N|--all] [--raw|--json]
 Show wallet transaction history, newest first.
 .SH CARD COMMANDS
 .TP
-.B uncut bins [--raw]
+.B uncut bins [--raw|--json]
 List available card BINs, supported currencies, and fees.
 .TP
-.B uncut new BIN_ID --topup AMOUNT [--name NAME] [--currency CODE] [--3ds --phone PHONE] [--wait] [--raw]
+.B uncut new BIN_ID --topup AMOUNT [--name NAME] [--currency CODE] [--3ds --phone PHONE] [--wait] [--raw|--json]
 Create a new card asynchronously. The initial top-up amount is required and must
-be greater than zero. Defaults: generated name and USD currency. The command
-checks existing cards and refuses duplicate names before sending the create
-request.
+be greater than zero. Defaults are a generated card name and USD currency.
+.PP
+If the BIN is unknown, run:
+.nf
+uncut new
+.fi
+.PP
+This prints current BINs, fees, defaults, and ready copy-paste create commands.
 .TP
-.B uncut cards [--reveal] [--raw]
-List cards. Without --reveal, full PAN/CVV is hidden.
+.B uncut cards [--reveal|--full] [--raw|--json]
+List cards. Without
+.B --reveal
+full PAN/CVV are hidden.
 .TP
-.B uncut card CARD_ID [--reveal] [--raw]
-Show one card. With --reveal, full PAN/CVV is shown.
+.B uncut card CARD_ID [--reveal|--full] [--raw|--json]
+Show one card. With
+.B --reveal
+full PAN/CVV are shown.
 .TP
-.B uncut topup CARD_ID --amount AMOUNT [--wait] [--raw]
-Move wallet funds to a card asynchronously. The amount can also be positional:
-uncut topup CARD_ID AMOUNT --wait.
+.B uncut topup CARD_ID --amount AMOUNT [--wait] [--raw|--json]
+Move wallet funds to a card asynchronously. Positional amount is also accepted:
+.nf
+uncut topup CARD_ID AMOUNT --wait
+.fi
 .TP
-.B uncut withdraw CARD_ID --amount AMOUNT [--wait] [--raw]
-Move card funds back to wallet asynchronously.
+.B uncut withdraw CARD_ID --amount AMOUNT [--wait] [--raw|--json]
+Move card funds back to wallet asynchronously. Positional amount is also
+accepted:
+.nf
+uncut withdraw CARD_ID AMOUNT --wait
+.fi
 .TP
-.B uncut transactions CARD_ID [--page N|--all] [--raw]
-Show card transactions, newest first.
+.B uncut transactions CARD_ID [--page N|--all] [--raw|--json]
+Show card transaction history, newest first.
 .TP
-.B uncut rename CARD_ID NAME [--raw]
+.B uncut rename CARD_ID NAME [--raw|--json]
 Rename a card.
 .TP
-.B uncut phone CARD_ID --phone PHONE [--raw]
-Update the 3DS phone number.
+.B uncut phone CARD_ID --phone PHONE [--raw|--json]
+Update the 3DS phone number. Use E.164 format such as +10000000000.
 .TP
-.B uncut freeze CARD_ID [--raw]
+.B uncut freeze CARD_ID [--raw|--json]
 Freeze a card.
 .TP
-.B uncut unfreeze CARD_ID [--raw]
+.B uncut unfreeze CARD_ID [--raw|--json]
 Unfreeze a card.
 .TP
-.B uncut delete CARD_ID [--yes] [--raw]
-Close a card and refund remaining balance. Without --yes, asks for
-confirmation.
+.B uncut delete CARD_ID [--yes] [--raw|--json]
+Close a card and refund remaining balance. Without
+.B --yes
+asks for confirmation.
 .SH OPERATION COMMANDS
 .TP
-.B uncut operation OPERATION_ID [--raw]
+.B uncut operation OPERATION_ID [--raw|--json]
 Show asynchronous operation status.
 .TP
-.B uncut wait OPERATION_ID [--interval SECONDS] [--timeout SECONDS] [--raw]
-Poll until an operation is completed, failed, or timed out.
-.SH HELP
+.B uncut wait OPERATION_ID [--interval SECONDS] [--timeout SECONDS] [--raw|--json]
+Poll until an operation reaches completed, error, or timeout.
+.SH DOCUMENTATION COMMANDS
+.TP
+.B uncut help
+Show a quick built-in manual.
 .TP
 .B uncut help COMMAND
-Show command-specific help and examples. For card and BIN commands, examples
-include current account ids when available.
+Show embedded command-specific markdown documentation and examples. For card and
+BIN commands, examples include current account ids when available.
+.TP
+.B uncut docs --list
+List embedded markdown documentation topics.
+.TP
+.B uncut docs TOPIC
+Print embedded markdown docs. Topics include readme, methods, errors, and every
+command name.
+.TP
+.B uncut docs all
+Print every embedded markdown document.
+.TP
+.B uncut man [TOPIC]
+Print the standalone built-in manual, or a command topic when TOPIC is supplied.
 .SH OPTIONS
 .TP
 .B --json
-Print JSON instead of formatted text for API commands.
+Print raw API JSON instead of formatted text for API commands.
 .TP
 .B --raw
 Print shell-friendly output. Balance prints one number; object and list commands
-print tab-separated rows without a header.
+print tab-separated rows without a header. Use
+.B uncut docs COMMAND
+to see raw columns.
 .TP
 .B --reveal, --full
 Reveal PAN/CVV for card commands.
@@ -118,46 +191,73 @@ Show help.
 .TP
 .B -v, --version
 Show version.
-.SH ENVIRONMENT
-.TP
-.B UNCUT_API_KEY
-API key used before the local config file.
-.TP
-.B UNCUT_BASE_URL
-API endpoint used before the local config file.
-.SH FILES
-.TP
-.B ~/.config/uncut/config.json
-Local config file containing the saved API key and endpoint. It is written with
-0600 permissions.
+.SH OUTPUT MODES
+.B --json
+is intended for programs that want API-shaped data.
+.PP
+.B --raw
+is intended for shell scripts. Examples:
+.nf
+uncut balance --raw
+uncut cards --raw
+uncut wallet --raw
+uncut operation OPERATION_ID --raw
+.fi
+.PP
+Raw list and object commands print tab-separated rows without a header. The
+embedded markdown docs list the exact columns.
 .SH EXAMPLES
 .nf
 uncut login
+uncut config
 uncut balance
-uncut deposit
-uncut bins
-uncut cards
-uncut card card_demo_ads --reveal
 uncut balance --raw
+uncut deposit
+uncut wallet --page 2
+uncut bins
+uncut new
+uncut new BIN_ID --topup 25 --wait
+uncut cards
 uncut cards --raw
-uncut new bin_demo_ads --topup 25 --wait
-uncut new bin_demo_ads --name "Facebook Ads" --currency USD --topup 25 --wait
-uncut topup card_demo_ads --amount 60 --wait
-uncut wait op_demo_topup --raw
+uncut card CARD_ID
+uncut card CARD_ID --reveal
+uncut topup CARD_ID --amount 60 --wait
+uncut withdraw CARD_ID --amount 20 --wait
+uncut transactions CARD_ID
+uncut operation OPERATION_ID
+uncut wait OPERATION_ID
 uncut help topup
-uncut transactions card_demo_ads --page 2
-uncut delete card_demo_ads --yes
+uncut docs withdraw
+uncut docs errors
+uncut man
 .fi
+.SH ENVIRONMENT
+.TP
+.B UNCUT_API_KEY
+API key. Takes precedence over the local config file.
+.TP
+.B UNCUT_BASE_URL
+API endpoint. Takes precedence over the local config file.
+.SH FILES
+.TP
+.B ~/.config/uncut/config.json
+Local config file containing the saved API key and endpoint.
+.TP
+.B $(brew --prefix uncut)/share/doc/uncut
+Markdown documentation installed by Homebrew.
 .SH EXIT STATUS
 .TP
 .B 0
 Success.
 .TP
 .B 1
-API or runtime error.
+API, network, or runtime error.
 .TP
 .B 2
-Usage error.
+CLI usage or preflight error.
 .TP
 .B 3
-Missing API key.
+Missing API key or endpoint.
+.SH SECURITY
+API keys, endpoints, PAN, CVV, real card ids, and operation ids are sensitive.
+Do not commit local config files or terminal logs containing private data.

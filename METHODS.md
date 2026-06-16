@@ -47,6 +47,17 @@ command:
 | `uncut operation <operation_id>` | `operation-status` | `GET /operations/{operation_id}` |
 | `uncut wait <operation_id>` | `operation-status` | `GET /operations/{operation_id}` |
 
+Documentation-only commands do not call the API:
+
+| CLI command | Purpose |
+|---|---|
+| `uncut help` | Print quick built-in manual |
+| `uncut help <command>` | Print embedded command docs with examples |
+| `uncut docs --list` | List embedded markdown documentation topics |
+| `uncut docs <topic>` | Print embedded markdown docs |
+| `uncut docs all` | Print all embedded markdown docs |
+| `uncut man` | Print full standalone manual from the binary |
+
 ## Auth
 
 ```sh

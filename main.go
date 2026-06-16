@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"embed"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -20,8 +21,11 @@ import (
 )
 
 const (
-	version = "0.1.1"
+	version = "0.1.2"
 )
+
+//go:embed README.md METHODS.md docs/ERRORS.md docs/commands/*.md man/uncut.1
+var embeddedDocs embed.FS
 
 var (
 	errMissingAPIKey   = errors.New("missing api key")
@@ -201,6 +205,10 @@ func run(args []string) int {
 	case "-v", "--version", "version":
 		fmt.Printf("uncut %s\n", version)
 		return 0
+	case "man":
+		return cmdMan(args[1:])
+	case "docs":
+		return cmdDocs(args[1:])
 	case "login":
 		return cmdLogin(args[1:])
 	case "logout":
@@ -249,196 +257,482 @@ func run(args []string) int {
 }
 
 func printHelp() {
-	fmt.Println("uncut - console client for Uncutt Cards API")
-	fmt.Println()
-	fmt.Println("Usage:")
-	fmt.Println("  uncut login")
-	fmt.Println("  uncut balance [--raw]")
-	fmt.Println("  uncut deposit")
-	fmt.Println("  uncut wallet [--page 2]")
-	fmt.Println("  uncut bins")
-	fmt.Println("  uncut cards [--reveal] [--raw|--json]")
-	fmt.Println("  uncut card <card_id> [--reveal] [--raw|--json]")
-	fmt.Println("  uncut new <bin_id> --topup 25 [--name <name>] [--currency USD]")
-	fmt.Println("  uncut topup <card_id> --amount 50 [--wait]")
-	fmt.Println("  uncut withdraw <card_id> --amount 20 [--wait]")
-	fmt.Println("  uncut transactions <card_id> [--page 2] [--raw|--json]")
-	fmt.Println("  uncut rename <card_id> <new_name>")
-	fmt.Println("  uncut phone <card_id> --phone +10000000000")
-	fmt.Println("  uncut freeze <card_id>")
-	fmt.Println("  uncut unfreeze <card_id>")
-	fmt.Println("  uncut delete <card_id> --yes")
-	fmt.Println("  uncut operation <operation_id>")
-	fmt.Println("  uncut wait <operation_id>")
-	fmt.Println()
-	fmt.Println("Commands:")
-	fmt.Println("  login      save API key and endpoint locally")
-	fmt.Println("  logout     remove saved API key")
-	fmt.Println("  config     show config status without exposing secrets")
-	fmt.Println("  balance    show wallet balance")
-	fmt.Println("  deposit    show USDT deposit addresses")
-	fmt.Println("  wallet     show wallet transaction history")
-	fmt.Println("  bins       list available card BINs and fees")
-	fmt.Println("  cards      list cards with safe masked details")
-	fmt.Println("  card       show one card; add --reveal for PAN/CVV")
-	fmt.Println("  new        create a new card")
-	fmt.Println("  topup      move wallet funds to a card")
-	fmt.Println("  withdraw   move card funds back to wallet")
-	fmt.Println("  transactions show card transaction history")
-	fmt.Println("  rename     rename a card")
-	fmt.Println("  phone      update 3DS phone")
-	fmt.Println("  freeze     freeze a card")
-	fmt.Println("  unfreeze   unfreeze a card")
-	fmt.Println("  delete     close a card and refund balance")
-	fmt.Println("  operation  show async operation status")
-	fmt.Println("  wait       wait for async operation completion")
-	fmt.Println()
-	fmt.Println("Use `uncut help <command>` for examples.")
+	printText(helpText)
 }
 
 func printCommandHelp(command string) int {
-	switch command {
-	case "login":
-		fmt.Println("Usage: uncut login")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut login")
-		fmt.Println()
-		fmt.Println("The command asks for both API key and API endpoint.")
-	case "logout":
-		fmt.Println("Usage: uncut logout")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut logout")
-	case "config":
-		fmt.Println("Usage: uncut config")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut config")
-	case "balance":
-		fmt.Println("Usage: uncut balance [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut balance")
-		fmt.Println("  uncut balance --raw")
-		fmt.Println("  uncut balance --json")
-	case "deposit":
-		fmt.Println("Usage: uncut deposit [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut deposit")
-		fmt.Println("  uncut deposit --raw")
-		fmt.Println("  uncut deposit --json")
-	case "wallet":
-		fmt.Println("Usage: uncut wallet [--page <n>|--all] [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut wallet")
-		fmt.Println("  uncut wallet --page 2")
-		fmt.Println("  uncut wallet --all")
-		fmt.Println("  uncut wallet --raw")
-	case "bins":
-		fmt.Println("Usage: uncut bins [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut bins")
-		fmt.Println("  uncut bins --raw")
-		fmt.Println("  uncut bins --json")
-	case "new":
-		fmt.Println("Usage: uncut new <bin_id> --topup <amount> [--name <name>] [--currency USD] [--wait] [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut new")
-		fmt.Println("  uncut new <bin_id> --topup 25 --wait")
-		fmt.Println("  uncut new <bin_id> --amount 25 --wait")
-		fmt.Println("  uncut new <bin_id> --name 'Facebook Ads' --topup 25 --wait")
-		printHelpBINExamples()
-	case "cards":
-		fmt.Println("Usage: uncut cards [--reveal|--full] [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut cards")
-		fmt.Println("  uncut cards --reveal")
-		fmt.Println("  uncut cards --raw")
-		fmt.Println("  uncut cards --json")
-	case "card":
-		fmt.Println("Usage: uncut card <card_id> [--reveal|--full] [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut card <card_id>")
-		fmt.Println("  uncut card <card_id> --reveal")
-		fmt.Println("  uncut card <card_id> --raw")
-		printHelpCardExamples("card")
-	case "topup":
-		fmt.Println("Usage: uncut topup <card_id> --amount <amount> [--wait] [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut topup <card_id> --amount 60 --wait")
-		fmt.Println("  uncut topup <card_id> 60 --wait")
-		printHelpCardExamples("topup")
-	case "withdraw":
-		fmt.Println("Usage: uncut withdraw <card_id> --amount <amount> [--wait] [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut withdraw <card_id> --amount 20 --wait")
-		fmt.Println("  uncut withdraw <card_id> 20 --wait")
-		printHelpCardExamples("withdraw")
-	case "transactions":
-		fmt.Println("Usage: uncut transactions <card_id> [--page <n>|--all] [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut transactions <card_id>")
-		fmt.Println("  uncut transactions <card_id> --page 2")
-		fmt.Println("  uncut transactions <card_id> --raw")
-		printHelpCardExamples("transactions")
-	case "rename":
-		fmt.Println("Usage: uncut rename <card_id> <new_name> [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut rename <card_id> 'Facebook Ads'")
-		printHelpCardExamples("rename")
-	case "phone":
-		fmt.Println("Usage: uncut phone <card_id> --phone <e164_phone> [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut phone <card_id> --phone +10000000000")
-		printHelpCardExamples("phone")
-	case "freeze":
-		fmt.Println("Usage: uncut freeze <card_id> [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut freeze <card_id>")
-		printHelpCardExamples("freeze")
-	case "unfreeze":
-		fmt.Println("Usage: uncut unfreeze <card_id> [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut unfreeze <card_id>")
-		printHelpCardExamples("unfreeze")
-	case "delete":
-		fmt.Println("Usage: uncut delete <card_id> [--yes] [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut delete <card_id>")
-		fmt.Println("  uncut delete <card_id> --yes")
-		printHelpCardExamples("delete")
-	case "operation":
-		fmt.Println("Usage: uncut operation <operation_id> [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut operation <operation_id>")
-	case "wait":
-		fmt.Println("Usage: uncut wait <operation_id> [--interval <seconds>] [--timeout <seconds>] [--raw|--json]")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  uncut wait <operation_id>")
-		fmt.Println("  uncut wait <operation_id> --interval 5 --timeout 180")
-	default:
-		fmt.Fprintf(os.Stderr, "unknown help topic: %s\n", command)
+	topic := normalizeDocTopic(command)
+	switch topic {
+	case "", "help":
+		printHelp()
+		return 0
+	case "man", "manual":
+		return printEmbeddedDoc("docs/commands/man.md")
+	case "docs", "doc":
+		return printEmbeddedDoc("docs/commands/docs.md")
+	}
+	if printCommandDoc(topic, true) {
+		return 0
+	}
+	fmt.Fprintf(os.Stderr, "unknown help topic: %s\n", command)
+	fmt.Fprintln(os.Stderr, "try: uncut help")
+	fmt.Fprintln(os.Stderr, "try: uncut docs --list")
+	return 2
+}
+
+func cmdMan(args []string) int {
+	if len(args) == 1 && (args[0] == "--help" || args[0] == "-h") {
+		printCommandHelp("man")
+		return 0
+	}
+	if len(args) > 1 {
+		fmt.Fprintln(os.Stderr, "usage: uncut man [topic]")
 		return 2
 	}
+	if len(args) == 1 {
+		topic := normalizeDocTopic(args[0])
+		if printCommandDoc(topic, true) {
+			return 0
+		}
+		fmt.Fprintf(os.Stderr, "unknown manual topic: %s\n", args[0])
+		fmt.Fprintln(os.Stderr, "try: uncut man")
+		fmt.Fprintln(os.Stderr, "try: uncut docs --list")
+		return 2
+	}
+	printText(manText)
 	return 0
 }
+
+func cmdDocs(args []string) int {
+	if len(args) == 1 && (args[0] == "--help" || args[0] == "-h") {
+		printCommandHelp("docs")
+		return 0
+	}
+	if len(args) > 1 {
+		fmt.Fprintln(os.Stderr, "usage: uncut docs [--list|all|readme|methods|errors|<command>]")
+		return 2
+	}
+	if len(args) == 0 || args[0] == "--list" || args[0] == "list" {
+		printDocsIndex()
+		return 0
+	}
+
+	topic := normalizeDocTopic(args[0])
+	switch topic {
+	case "all":
+		printAllDocs()
+		return 0
+	case "readme", "readme.md":
+		return printEmbeddedDoc("README.md")
+	case "methods", "methods.md":
+		return printEmbeddedDoc("METHODS.md")
+	case "errors", "errors.md":
+		return printEmbeddedDoc("docs/ERRORS.md")
+	case "manual":
+		printText(manText)
+		return 0
+	}
+	if printCommandDoc(topic, true) {
+		return 0
+	}
+	fmt.Fprintf(os.Stderr, "unknown docs topic: %s\n", args[0])
+	fmt.Fprintln(os.Stderr, "try: uncut docs --list")
+	return 2
+}
+
+func printCommandDoc(command string, withLiveExamples bool) bool {
+	path := commandDocPath(command)
+	if path == "" {
+		return false
+	}
+	if printEmbeddedDoc(path) != 0 {
+		return false
+	}
+	if !withLiveExamples {
+		return true
+	}
+	switch command {
+	case "new":
+		printHelpBINExamples()
+	case "card", "topup", "withdraw", "transactions", "rename", "phone", "freeze", "unfreeze", "delete":
+		printHelpCardExamples(command)
+	}
+	return true
+}
+
+func commandDocPath(command string) string {
+	switch command {
+	case "login", "logout", "config", "balance", "deposit", "wallet", "bins", "new",
+		"cards", "card", "topup", "withdraw", "transactions", "rename", "phone",
+		"freeze", "unfreeze", "delete", "operation", "wait", "docs", "man":
+		return "docs/commands/" + command + ".md"
+	default:
+		return ""
+	}
+}
+
+func printEmbeddedDoc(path string) int {
+	raw, err := embeddedDocs.ReadFile(path)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "docs failed: %v\n", err)
+		return 1
+	}
+	printText(string(raw))
+	return 0
+}
+
+func printDocsIndex() {
+	printText(docsIndexText)
+}
+
+func printAllDocs() {
+	paths := []string{
+		"README.md",
+		"METHODS.md",
+		"docs/ERRORS.md",
+	}
+	for _, command := range []string{
+		"login", "logout", "config", "balance", "deposit", "wallet", "bins", "new",
+		"cards", "card", "topup", "withdraw", "transactions", "rename", "phone",
+		"freeze", "unfreeze", "delete", "operation", "wait", "docs", "man",
+	} {
+		paths = append(paths, "docs/commands/"+command+".md")
+	}
+	for idx, path := range paths {
+		if idx > 0 {
+			fmt.Println()
+			fmt.Println("---")
+			fmt.Println()
+		}
+		_ = printEmbeddedDoc(path)
+	}
+}
+
+func normalizeDocTopic(value string) string {
+	return strings.ToLower(strings.TrimSpace(value))
+}
+
+func printText(value string) {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return
+	}
+	fmt.Println(value)
+}
+
+const helpText = `
+uncut - standalone console client for the Uncutt Cards API
+
+What this is:
+  uncut is a single Go binary for wallet and virtual-card operations.
+  It does not require Node.js, npm, curl, Go, or any runtime dependency.
+  It calls the API directly and stores only local auth configuration.
+
+First run:
+  uncut login
+
+Login asks for:
+  1. API key
+  2. API endpoint
+
+Both values are private. They are saved locally in:
+  ~/.config/uncut/config.json
+
+The config file is written with 0600 permissions. The endpoint is not compiled
+into the binary and is not printed by uncut config.
+
+Common workflow:
+  uncut balance
+  uncut deposit
+  uncut bins
+  uncut new
+  uncut new <bin_id> --topup 25 --wait
+  uncut cards
+  uncut card <card_id>
+  uncut card <card_id> --reveal
+  uncut topup <card_id> --amount 50 --wait
+  uncut withdraw <card_id> --amount 20 --wait
+  uncut transactions <card_id>
+
+Commands:
+  login         Save API key and endpoint locally.
+  logout        Remove saved local credentials.
+  config        Show whether key/endpoint are configured without secrets.
+  balance       Show wallet balance. Add --raw for only the number.
+  deposit       Show USDT deposit addresses.
+  wallet        Show wallet transaction history, newest first.
+  bins          Show available card BINs, currencies, and fees.
+  new           Create a card. Requires BIN and positive initial --topup.
+  cards         List cards with masked PAN/CVV by default.
+  card          Show one card. Add --reveal only when full PAN/CVV is needed.
+  topup         Move wallet funds to a card asynchronously.
+  withdraw      Move card funds back to wallet asynchronously.
+  transactions  Show card transaction history, newest first.
+  rename        Rename a card.
+  phone         Update the 3DS phone number.
+  freeze        Freeze a card.
+  unfreeze      Unfreeze a card.
+  delete        Close a card and refund remaining balance.
+  operation     Show one async operation status.
+  wait          Poll an async operation until completed/error/timeout.
+  docs          Print embedded markdown docs.
+  man           Print the full built-in manual.
+
+Output modes:
+  --json   Print raw API JSON for agents and programs.
+  --raw    Print shell-friendly text. Balance is one number. Lists/objects are
+           tab-separated rows without a header; use command docs for columns.
+
+Important safety rules:
+  Card data is sensitive. Use --reveal only when full PAN/CVV is needed.
+  new, topup, withdraw, freeze, unfreeze, delete, rename, and phone can change
+  live account state.
+  delete asks for confirmation unless --yes is passed.
+  new/topup/withdraw return operation ids. Add --wait to poll until final state.
+
+Get more documentation:
+  uncut help <command>      Command manual with examples.
+  uncut docs <command>      Same command manual in markdown.
+  uncut docs --list         List embedded docs topics.
+  uncut docs all            Print all embedded markdown docs.
+  uncut man                 Full standalone manual.
+  man uncut                 System man page when installed by Homebrew/package.
+
+Examples:
+  uncut help new
+  uncut help topup
+  uncut docs card
+  uncut docs errors
+`
+
+const docsHelpText = `
+Usage: uncut docs [--list|all|readme|methods|errors|<command>]
+
+Print embedded markdown documentation from inside the binary. This works even
+when the repository checkout is not present.
+
+Examples:
+  uncut docs --list
+  uncut docs readme
+  uncut docs methods
+  uncut docs errors
+  uncut docs new
+  uncut docs topup
+  uncut docs all
+
+Installed Homebrew packages also place markdown docs under:
+  $(brew --prefix uncut)/share/doc/uncut
+`
+
+const docsIndexText = `
+uncut embedded docs
+
+General topics:
+  readme      Main README
+  methods     CLI-to-API command mapping
+  errors      Error handling and exit codes
+  all         Print every embedded markdown document
+
+Command topics:
+  login
+  logout
+  config
+  balance
+  deposit
+  wallet
+  bins
+  new
+  cards
+  card
+  topup
+  withdraw
+  transactions
+  rename
+  phone
+  freeze
+  unfreeze
+  delete
+  operation
+  wait
+  docs
+  man
+
+Examples:
+  uncut docs new
+  uncut docs card
+  uncut docs topup
+  uncut docs errors
+  uncut docs man
+`
+
+const manText = `
+UNCUT(1)                         User Commands                        UNCUT(1)
+
+NAME
+  uncut - standalone console client for the Uncutt Cards API
+
+SYNOPSIS
+  uncut <command> [target] [options]
+  uncut help <command>
+  uncut docs <command>
+  uncut man
+
+DESCRIPTION
+  uncut manages wallet and virtual-card operations from a terminal. It is a
+  standalone Go binary. Users do not need Go, Node.js, npm, curl, or external
+  runtime packages.
+
+  The binary has no compiled default API endpoint. Login asks for both an API
+  key and an API endpoint. The endpoint is private account configuration.
+
+FIRST RUN
+  uncut login
+
+  The command prompts:
+    Enter API key:
+    Enter API endpoint:
+
+  The values are saved to:
+    ~/.config/uncut/config.json
+
+  The file is written with 0600 permissions. Use uncut config to check status
+  without printing the full key or endpoint.
+
+AUTH COMMANDS
+  uncut login
+    Save API key and API endpoint locally.
+
+  uncut logout
+    Remove saved local credentials.
+
+  uncut config
+    Show config status without exposing secrets.
+
+WALLET COMMANDS
+  uncut balance [--raw|--json]
+    Show wallet balance. --raw prints only the numeric balance, for example
+    84.8.
+
+  uncut deposit [--raw|--json]
+    Show USDT deposit addresses.
+
+  uncut wallet [--page N|--all] [--raw|--json]
+    Show wallet transaction history, newest first.
+
+CARD COMMANDS
+  uncut bins [--raw|--json]
+    List available BINs, supported currencies, and fees.
+
+  uncut new <bin_id> --topup <amount> [--name <name>] [--currency USD] [--wait]
+    Create a new card. The initial top-up amount is required and must be > 0.
+    If the BIN is unknown, run uncut new with no arguments to print current
+    BINs and copy-paste create commands.
+
+  uncut cards [--reveal|--full] [--raw|--json]
+    List cards. Without --reveal, PAN/CVV are masked.
+
+  uncut card <card_id> [--reveal|--full] [--raw|--json]
+    Show one card. Add --reveal only when full PAN/CVV is required.
+
+  uncut topup <card_id> --amount <amount> [--wait] [--raw|--json]
+    Move wallet funds to a card. Positional amount is also accepted:
+    uncut topup <card_id> 50 --wait
+
+  uncut withdraw <card_id> --amount <amount> [--wait] [--raw|--json]
+    Move card funds back to the wallet. Positional amount is also accepted:
+    uncut withdraw <card_id> 20 --wait
+
+  uncut transactions <card_id> [--page N|--all] [--raw|--json]
+    Show card transaction history, newest first.
+
+  uncut rename <card_id> <new_name> [--raw|--json]
+    Rename a card.
+
+  uncut phone <card_id> --phone <e164_phone> [--raw|--json]
+    Update the 3DS phone number. Use E.164 format, for example +10000000000.
+
+  uncut freeze <card_id> [--raw|--json]
+    Freeze a card.
+
+  uncut unfreeze <card_id> [--raw|--json]
+    Unfreeze a card.
+
+  uncut delete <card_id> [--yes] [--raw|--json]
+    Close a card and refund remaining balance. Without --yes, asks for
+    confirmation.
+
+OPERATION COMMANDS
+  uncut operation <operation_id> [--raw|--json]
+    Show asynchronous operation status.
+
+  uncut wait <operation_id> [--interval seconds] [--timeout seconds] [--raw|--json]
+    Poll until an operation reaches completed, error, or timeout.
+
+DOCUMENTATION COMMANDS
+  uncut help
+    Show the quick manual.
+
+  uncut help <command>
+    Show command-specific embedded markdown docs with examples.
+
+  uncut docs --list
+    List embedded docs topics.
+
+  uncut docs <command>
+    Print command-specific markdown docs.
+
+  uncut docs all
+    Print all embedded markdown docs.
+
+  uncut man
+    Print this standalone manual.
+
+OUTPUT MODES
+  --json
+    Print raw API JSON without decorative formatting.
+
+  --raw
+    Print shell-friendly output. balance --raw prints one number. List/object
+    commands print tab-separated rows without a header. The command docs list
+    raw columns.
+
+EXAMPLES
+  uncut login
+  uncut config
+  uncut balance
+  uncut balance --raw
+  uncut deposit
+  uncut bins
+  uncut new
+  uncut new <bin_id> --topup 25 --wait
+  uncut cards
+  uncut card <card_id>
+  uncut card <card_id> --reveal
+  uncut topup <card_id> --amount 60 --wait
+  uncut withdraw <card_id> --amount 20 --wait
+  uncut transactions <card_id>
+  uncut operation <operation_id>
+  uncut wait <operation_id>
+  uncut help topup
+  uncut docs withdraw
+
+ENVIRONMENT
+  UNCUT_API_KEY
+    API key. Takes precedence over local config.
+
+  UNCUT_BASE_URL
+    API endpoint. Takes precedence over local config.
+
+FILES
+  ~/.config/uncut/config.json
+    Local API key and endpoint config.
+
+EXIT STATUS
+  0  Success
+  1  API, network, or runtime error
+  2  CLI usage or preflight error
+  3  Missing API key or endpoint
+`
 
 func cmdLogin(args []string) int {
 	fs := newFlagSet("login")

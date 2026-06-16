@@ -7,7 +7,7 @@ Show USDT deposit addresses for funding the wallet.
 ## Synopsis
 
 ```sh
-uncut deposit [--json]
+uncut deposit [--raw|--json]
 ```
 
 ## API Mapping
@@ -20,6 +20,7 @@ GET /wallet/deposit-addresses
 
 | Flag | Required | Description |
 |---|---|---|
+| `--raw` | no | Print tab-separated fields without a header |
 | `--json` | no | Print raw API JSON |
 
 ## Examples
@@ -36,6 +37,12 @@ Use JSON for scripts:
 uncut deposit --json
 ```
 
+Use TSV for shell scripts:
+
+```sh
+uncut deposit --raw
+```
+
 ## Output
 
 ```text
@@ -46,6 +53,12 @@ ETH USDT
 
 TRON USDT
 TN3W4H6rK2ce4vX9YnFQHwKENnHjoxb3m9
+```
+
+Raw columns:
+
+```text
+chain	token	address
 ```
 
 ## Errors

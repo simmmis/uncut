@@ -7,7 +7,7 @@ Show one asynchronous operation status.
 ## Synopsis
 
 ```sh
-uncut operation <operation_id> [--json]
+uncut operation <operation_id> [--raw|--json]
 ```
 
 ## API Mapping
@@ -21,6 +21,7 @@ GET /operations/{operation_id}
 | Argument / Flag | Required | Description |
 |---|---|---|
 | `<operation_id>` | yes | Operation id from `new`, `topup`, or `withdraw` |
+| `--raw` | no | Print one tab-separated operation row |
 | `--json` | no | Print raw API JSON |
 
 ## Examples
@@ -37,6 +38,12 @@ Use JSON:
 uncut operation op_demo_topup --json
 ```
 
+Use TSV:
+
+```sh
+uncut operation op_demo_topup --raw
+```
+
 ## Output
 
 ```text
@@ -47,6 +54,12 @@ amount: -27.00
 card: card_demo_ads
 created: 2026-06-11T10:00:00+00:00
 updated: 2026-06-11T10:00:40+00:00
+```
+
+Raw columns:
+
+```text
+operation_id	type	status	amount	card_id	created_at	updated_at	error_message
 ```
 
 ## Terminal Statuses

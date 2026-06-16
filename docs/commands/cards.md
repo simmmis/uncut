@@ -7,7 +7,7 @@ List all cards.
 ## Synopsis
 
 ```sh
-uncut cards [--reveal|--full] [--json]
+uncut cards [--reveal|--full] [--raw|--json]
 ```
 
 ## API Mapping
@@ -33,6 +33,7 @@ In reveal mode, one details request is made per card.
 |---|---|---|
 | `--reveal` | no | Show PAN/CVV |
 | `--full` | no | Alias for `--reveal` |
+| `--raw` | no | Print tab-separated fields without a header |
 | `--json` | no | Print JSON |
 
 ## Examples
@@ -53,6 +54,12 @@ Use JSON for scripts:
 
 ```sh
 uncut cards --json
+```
+
+Use TSV for shell scripts:
+
+```sh
+uncut cards --raw
 ```
 
 ## Output
@@ -76,6 +83,14 @@ id: card_demo_ads
 EXP:MM/YY  CVV:DEMO  Active
 Balance: $23.55
 ```
+
+Raw columns:
+
+```text
+id	name	mask	card_number	expiration_date	cvv	currency	balance	status	expire_month	expire_year	phone_3ds	created_at
+```
+
+Without `--reveal`, `card_number`, `expiration_date`, and `cvv` are empty.
 
 ## Security
 

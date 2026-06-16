@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	version = "0.1.0"
+	version = "0.1.1"
 )
 
 var (
@@ -253,16 +253,16 @@ func printHelp() {
 	fmt.Println()
 	fmt.Println("Usage:")
 	fmt.Println("  uncut login")
-	fmt.Println("  uncut balance")
+	fmt.Println("  uncut balance [--raw]")
 	fmt.Println("  uncut deposit")
 	fmt.Println("  uncut wallet [--page 2]")
 	fmt.Println("  uncut bins")
-	fmt.Println("  uncut cards [--reveal] [--json]")
-	fmt.Println("  uncut card <card_id> [--reveal] [--json]")
-	fmt.Println("  uncut new <bin_id> [--name <name>] [--currency USD] [--topup 0]")
+	fmt.Println("  uncut cards [--reveal] [--raw|--json]")
+	fmt.Println("  uncut card <card_id> [--reveal] [--raw|--json]")
+	fmt.Println("  uncut new <bin_id> --topup 25 [--name <name>] [--currency USD]")
 	fmt.Println("  uncut topup <card_id> --amount 50 [--wait]")
 	fmt.Println("  uncut withdraw <card_id> --amount 20 [--wait]")
-	fmt.Println("  uncut transactions <card_id> [--page 2]")
+	fmt.Println("  uncut transactions <card_id> [--page 2] [--raw|--json]")
 	fmt.Println("  uncut rename <card_id> <new_name>")
 	fmt.Println("  uncut phone <card_id> --phone +10000000000")
 	fmt.Println("  uncut freeze <card_id>")
@@ -316,111 +316,119 @@ func printCommandHelp(command string) int {
 		fmt.Println("Examples:")
 		fmt.Println("  uncut config")
 	case "balance":
-		fmt.Println("Usage: uncut balance [--json]")
+		fmt.Println("Usage: uncut balance [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut balance")
+		fmt.Println("  uncut balance --raw")
 		fmt.Println("  uncut balance --json")
 	case "deposit":
-		fmt.Println("Usage: uncut deposit [--json]")
+		fmt.Println("Usage: uncut deposit [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut deposit")
+		fmt.Println("  uncut deposit --raw")
 		fmt.Println("  uncut deposit --json")
 	case "wallet":
-		fmt.Println("Usage: uncut wallet [--page <n>|--all] [--json]")
+		fmt.Println("Usage: uncut wallet [--page <n>|--all] [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut wallet")
 		fmt.Println("  uncut wallet --page 2")
 		fmt.Println("  uncut wallet --all")
+		fmt.Println("  uncut wallet --raw")
 	case "bins":
-		fmt.Println("Usage: uncut bins [--json]")
+		fmt.Println("Usage: uncut bins [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut bins")
+		fmt.Println("  uncut bins --raw")
 		fmt.Println("  uncut bins --json")
 	case "new":
-		fmt.Println("Usage: uncut new <bin_id> [--name <name>] [--currency USD] [--topup 0] [--wait]")
+		fmt.Println("Usage: uncut new <bin_id> --topup <amount> [--name <name>] [--currency USD] [--wait] [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut new")
-		fmt.Println("  uncut new <bin_id> --wait")
+		fmt.Println("  uncut new <bin_id> --topup 25 --wait")
+		fmt.Println("  uncut new <bin_id> --amount 25 --wait")
 		fmt.Println("  uncut new <bin_id> --name 'Facebook Ads' --topup 25 --wait")
 		printHelpBINExamples()
 	case "cards":
-		fmt.Println("Usage: uncut cards [--reveal|--full] [--json]")
+		fmt.Println("Usage: uncut cards [--reveal|--full] [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut cards")
 		fmt.Println("  uncut cards --reveal")
+		fmt.Println("  uncut cards --raw")
 		fmt.Println("  uncut cards --json")
 	case "card":
-		fmt.Println("Usage: uncut card <card_id> [--reveal|--full] [--json]")
+		fmt.Println("Usage: uncut card <card_id> [--reveal|--full] [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut card <card_id>")
 		fmt.Println("  uncut card <card_id> --reveal")
+		fmt.Println("  uncut card <card_id> --raw")
 		printHelpCardExamples("card")
 	case "topup":
-		fmt.Println("Usage: uncut topup <card_id> --amount <amount> [--wait] [--json]")
+		fmt.Println("Usage: uncut topup <card_id> --amount <amount> [--wait] [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut topup <card_id> --amount 60 --wait")
 		fmt.Println("  uncut topup <card_id> 60 --wait")
 		printHelpCardExamples("topup")
 	case "withdraw":
-		fmt.Println("Usage: uncut withdraw <card_id> --amount <amount> [--wait] [--json]")
+		fmt.Println("Usage: uncut withdraw <card_id> --amount <amount> [--wait] [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut withdraw <card_id> --amount 20 --wait")
 		fmt.Println("  uncut withdraw <card_id> 20 --wait")
 		printHelpCardExamples("withdraw")
 	case "transactions":
-		fmt.Println("Usage: uncut transactions <card_id> [--page <n>|--all] [--json]")
+		fmt.Println("Usage: uncut transactions <card_id> [--page <n>|--all] [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut transactions <card_id>")
 		fmt.Println("  uncut transactions <card_id> --page 2")
+		fmt.Println("  uncut transactions <card_id> --raw")
 		printHelpCardExamples("transactions")
 	case "rename":
-		fmt.Println("Usage: uncut rename <card_id> <new_name> [--json]")
+		fmt.Println("Usage: uncut rename <card_id> <new_name> [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut rename <card_id> 'Facebook Ads'")
 		printHelpCardExamples("rename")
 	case "phone":
-		fmt.Println("Usage: uncut phone <card_id> --phone <e164_phone> [--json]")
+		fmt.Println("Usage: uncut phone <card_id> --phone <e164_phone> [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut phone <card_id> --phone +10000000000")
 		printHelpCardExamples("phone")
 	case "freeze":
-		fmt.Println("Usage: uncut freeze <card_id> [--json]")
+		fmt.Println("Usage: uncut freeze <card_id> [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut freeze <card_id>")
 		printHelpCardExamples("freeze")
 	case "unfreeze":
-		fmt.Println("Usage: uncut unfreeze <card_id> [--json]")
+		fmt.Println("Usage: uncut unfreeze <card_id> [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut unfreeze <card_id>")
 		printHelpCardExamples("unfreeze")
 	case "delete":
-		fmt.Println("Usage: uncut delete <card_id> [--yes] [--json]")
+		fmt.Println("Usage: uncut delete <card_id> [--yes] [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut delete <card_id>")
 		fmt.Println("  uncut delete <card_id> --yes")
 		printHelpCardExamples("delete")
 	case "operation":
-		fmt.Println("Usage: uncut operation <operation_id> [--json]")
+		fmt.Println("Usage: uncut operation <operation_id> [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut operation <operation_id>")
 	case "wait":
-		fmt.Println("Usage: uncut wait <operation_id> [--interval <seconds>] [--timeout <seconds>] [--json]")
+		fmt.Println("Usage: uncut wait <operation_id> [--interval <seconds>] [--timeout <seconds>] [--raw|--json]")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  uncut wait <operation_id>")
@@ -536,11 +544,15 @@ func cmdConfig(args []string) int {
 func cmdBalance(args []string) int {
 	fs := newFlagSet("balance")
 	jsonOut := fs.Bool("json", false, "print raw JSON")
+	rawOut := fs.Bool("raw", false, "print only the numeric balance")
 	if err := fs.Parse(args); err != nil {
 		return 2
 	}
 	if fs.NArg() != 0 {
-		fmt.Fprintln(os.Stderr, "usage: uncut balance [--json]")
+		fmt.Fprintln(os.Stderr, "usage: uncut balance [--raw|--json]")
+		return 2
+	}
+	if outputFlagsConflict(*jsonOut, *rawOut, "balance") {
 		return 2
 	}
 
@@ -558,6 +570,10 @@ func cmdBalance(args []string) int {
 		printRawJSON(raw)
 		return 0
 	}
+	if *rawOut {
+		fmt.Println(rawNumber(balance.Balance))
+		return 0
+	}
 	fmt.Printf("Balance: %s\n", formatBalance(balance.Balance, balance.Currency))
 	return 0
 }
@@ -565,11 +581,15 @@ func cmdBalance(args []string) int {
 func cmdDeposit(args []string) int {
 	fs := newFlagSet("deposit")
 	jsonOut := fs.Bool("json", false, "print raw JSON")
+	rawOut := fs.Bool("raw", false, "print tab-separated fields")
 	if err := fs.Parse(args); err != nil {
 		return 2
 	}
 	if fs.NArg() != 0 {
-		fmt.Fprintln(os.Stderr, "usage: uncut deposit [--json]")
+		fmt.Fprintln(os.Stderr, "usage: uncut deposit [--raw|--json]")
+		return 2
+	}
+	if outputFlagsConflict(*jsonOut, *rawOut, "deposit") {
 		return 2
 	}
 
@@ -585,6 +605,10 @@ func cmdDeposit(args []string) int {
 	}
 	if *jsonOut {
 		printRawJSON(raw)
+		return 0
+	}
+	if *rawOut {
+		printDepositAddressesRaw(addresses)
 		return 0
 	}
 	if len(addresses) == 0 {
@@ -604,13 +628,16 @@ func cmdDeposit(args []string) int {
 }
 
 func cmdWallet(args []string) int {
-	opts, err := parseOptions(args, []string{"json", "all"}, []string{"page"})
+	opts, err := parseOptions(args, []string{"json", "raw", "all"}, []string{"page"})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "wallet failed: %v\n", err)
 		return 2
 	}
 	if len(opts.positionals) != 0 {
-		fmt.Fprintln(os.Stderr, "usage: uncut wallet [--page <n>|--all] [--json]")
+		fmt.Fprintln(os.Stderr, "usage: uncut wallet [--page <n>|--all] [--raw|--json]")
+		return 2
+	}
+	if outputFlagsConflict(opts.bool("json"), opts.bool("raw"), "wallet") {
 		return 2
 	}
 
@@ -626,7 +653,7 @@ func cmdWallet(args []string) int {
 	}
 
 	if opts.bool("all") {
-		return printAllWalletTransactions(c, opts.bool("json"))
+		return printAllWalletTransactions(c, opts.bool("json"), opts.bool("raw"))
 	}
 
 	items, raw, env, err := fetchWalletTransactions(c, page)
@@ -637,6 +664,10 @@ func cmdWallet(args []string) int {
 		printRawJSON(raw)
 		return 0
 	}
+	if opts.bool("raw") {
+		printWalletTransactionsRaw(items)
+		return 0
+	}
 	printWalletTransactions(items, env)
 	return 0
 }
@@ -644,11 +675,15 @@ func cmdWallet(args []string) int {
 func cmdBins(args []string) int {
 	fs := newFlagSet("bins")
 	jsonOut := fs.Bool("json", false, "print raw JSON")
+	rawOut := fs.Bool("raw", false, "print tab-separated fields")
 	if err := fs.Parse(args); err != nil {
 		return 2
 	}
 	if fs.NArg() != 0 {
-		fmt.Fprintln(os.Stderr, "usage: uncut bins [--json]")
+		fmt.Fprintln(os.Stderr, "usage: uncut bins [--raw|--json]")
+		return 2
+	}
+	if outputFlagsConflict(*jsonOut, *rawOut, "bins") {
 		return 2
 	}
 
@@ -665,26 +700,41 @@ func cmdBins(args []string) int {
 		printRawJSON(raw)
 		return 0
 	}
+	if *rawOut {
+		printBinsRaw(bins)
+		return 0
+	}
 	printBins(bins)
 	return 0
 }
 
 func cmdNew(args []string) int {
-	opts, err := parseOptions(args, []string{"3ds", "wait", "json"}, []string{"bin", "name", "currency", "topup", "phone", "interval", "timeout"})
+	opts, err := parseOptions(args, []string{"3ds", "wait", "json", "raw"}, []string{"bin", "name", "currency", "topup", "amount", "phone", "interval", "timeout"})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "new failed: %v\n", err)
 		return 2
 	}
-	if len(opts.positionals) > 1 {
-		fmt.Fprintln(os.Stderr, "usage: uncut new <bin_id> [--name <name>] [--currency <code>] [--topup <amount>] [--3ds --phone <number>] [--wait] [--json]")
+	if len(opts.positionals) > 2 {
+		fmt.Fprintln(os.Stderr, "usage: uncut new <bin_id> --topup <amount> [--name <name>] [--currency <code>] [--3ds --phone <number>] [--wait] [--raw|--json]")
+		return 2
+	}
+	if outputFlagsConflict(opts.bool("json"), opts.bool("raw"), "new") {
+		return 2
+	}
+	if opts.hasValue("topup") && opts.hasValue("amount") {
+		fmt.Fprintln(os.Stderr, "new failed: pass either --topup or --amount, not both")
+		return 2
+	}
+	if len(opts.positionals) == 2 && (opts.hasValue("topup") || opts.hasValue("amount")) {
+		fmt.Fprintln(os.Stderr, "new failed: pass top-up amount either as --topup/--amount or as a positional amount, not both")
 		return 2
 	}
 
 	binID := strings.TrimSpace(opts.value("bin"))
-	if binID == "" && len(opts.positionals) == 1 {
+	if binID == "" && len(opts.positionals) >= 1 {
 		binID = strings.TrimSpace(opts.positionals[0])
 	}
-	if binID != "" && len(opts.positionals) == 1 && strings.TrimSpace(opts.value("bin")) != "" {
+	if binID != "" && len(opts.positionals) >= 1 && strings.TrimSpace(opts.value("bin")) != "" {
 		fmt.Fprintln(os.Stderr, "new failed: pass BIN either as <bin_id> or --bin, not both")
 		return 2
 	}
@@ -717,14 +767,26 @@ func cmdNew(args []string) int {
 		name = defaultCardName()
 	}
 	currency := strings.ToUpper(strings.TrimSpace(opts.valueDefault("currency", "USD")))
-	topupRaw := strings.TrimSpace(opts.valueDefault("topup", "0"))
 	if currency == "" {
 		currency = "USD"
 	}
 
-	topupAmount, err := parseNonNegativeFloat(topupRaw, "--topup")
+	topupRaw, topupName, ok := newTopupInput(opts)
+	if !ok {
+		fmt.Fprintln(os.Stderr, "error: --topup is required")
+		fmt.Fprintln(os.Stderr, "hint: card creation requires a positive initial top-up; use --topup 25 or --amount 25")
+		fmt.Fprintln(os.Stderr)
+		bins, _, err := fetchBins(c)
+		if err != nil {
+			return printCommandError(err)
+		}
+		printNewAmountHelp(bins, binID, name, currency)
+		return 2
+	}
+	topupAmount, err := parsePositiveFloat(topupRaw, topupName)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "new failed: %v\n", err)
+		fmt.Fprintln(os.Stderr, "hint: card creation requires a positive initial top-up; use --topup 25 or --amount 25")
 		return 2
 	}
 	var waitOpts waitOptions
@@ -768,25 +830,29 @@ func cmdNew(args []string) int {
 		printRawJSON(raw)
 		return 0
 	}
-	if !opts.bool("json") {
+	if opts.bool("raw") && !opts.bool("wait") {
+		printQueuedOperationRaw(queued)
+		return 0
+	}
+	if !opts.bool("json") && !opts.bool("raw") {
 		printQueuedOperation(queued)
 	}
 	if opts.bool("wait") {
-		return waitForOperation(c, queued.OperationID, waitOpts, opts.bool("json"))
+		return waitForOperation(c, queued.OperationID, waitOpts, opts.bool("json"), opts.bool("raw"))
 	}
 	return 0
 }
 
 func cmdTopup(args []string) int {
-	return cmdCardAmountOperation(args, "topup", "/cards/%s/topup", "uncut topup <card_id> --amount <amount> [--wait] [--json]")
+	return cmdCardAmountOperation(args, "topup", "/cards/%s/topup", "uncut topup <card_id> --amount <amount> [--wait] [--raw|--json]")
 }
 
 func cmdWithdraw(args []string) int {
-	return cmdCardAmountOperation(args, "withdraw", "/cards/%s/withdraw", "uncut withdraw <card_id> --amount <amount> [--wait] [--json]")
+	return cmdCardAmountOperation(args, "withdraw", "/cards/%s/withdraw", "uncut withdraw <card_id> --amount <amount> [--wait] [--raw|--json]")
 }
 
 func cmdCardAmountOperation(args []string, command string, pathFormat string, usage string) int {
-	opts, err := parseOptions(args, []string{"wait", "json"}, []string{"amount", "interval", "timeout"})
+	opts, err := parseOptions(args, []string{"wait", "json", "raw"}, []string{"amount", "interval", "timeout"})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s failed: %v\n", command, err)
 		if maybeAmountOptionError(err) {
@@ -797,6 +863,9 @@ func cmdCardAmountOperation(args []string, command string, pathFormat string, us
 	}
 	if len(opts.positionals) < 1 || len(opts.positionals) > 2 {
 		printUsageWithCardExamples(command, usage)
+		return 2
+	}
+	if outputFlagsConflict(opts.bool("json"), opts.bool("raw"), command) {
 		return 2
 	}
 	cardID := opts.positionals[0]
@@ -833,24 +902,31 @@ func cmdCardAmountOperation(args []string, command string, pathFormat string, us
 		printRawJSON(raw)
 		return 0
 	}
-	if !opts.bool("json") {
+	if opts.bool("raw") && !opts.bool("wait") {
+		printQueuedOperationRaw(queued)
+		return 0
+	}
+	if !opts.bool("json") && !opts.bool("raw") {
 		printQueuedOperation(queued)
 	}
 	if opts.bool("wait") {
-		return waitForOperation(c, queued.OperationID, waitOpts, opts.bool("json"))
+		return waitForOperation(c, queued.OperationID, waitOpts, opts.bool("json"), opts.bool("raw"))
 	}
 	return 0
 }
 
 func cmdTransactions(args []string) int {
-	opts, err := parseOptions(args, []string{"json", "all"}, []string{"page"})
+	opts, err := parseOptions(args, []string{"json", "raw", "all"}, []string{"page"})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "transactions failed: %v\n", err)
-		printUsageWithCardExamples("transactions", "uncut transactions <card_id> [--page <n>|--all] [--json]")
+		printUsageWithCardExamples("transactions", "uncut transactions <card_id> [--page <n>|--all] [--raw|--json]")
 		return 2
 	}
 	if len(opts.positionals) != 1 {
-		printUsageWithCardExamples("transactions", "uncut transactions <card_id> [--page <n>|--all] [--json]")
+		printUsageWithCardExamples("transactions", "uncut transactions <card_id> [--page <n>|--all] [--raw|--json]")
+		return 2
+	}
+	if outputFlagsConflict(opts.bool("json"), opts.bool("raw"), "transactions") {
 		return 2
 	}
 	cardID := opts.positionals[0]
@@ -866,7 +942,7 @@ func cmdTransactions(args []string) int {
 	}
 
 	if opts.bool("all") {
-		return printAllCardTransactions(c, cardID, opts.bool("json"))
+		return printAllCardTransactions(c, cardID, opts.bool("json"), opts.bool("raw"))
 	}
 
 	items, raw, env, err := fetchCardTransactions(c, cardID, page)
@@ -877,19 +953,26 @@ func cmdTransactions(args []string) int {
 		printRawJSON(raw)
 		return 0
 	}
+	if opts.bool("raw") {
+		printCardTransactionsRaw(items)
+		return 0
+	}
 	printCardTransactions(cardID, items, env)
 	return 0
 }
 
 func cmdRename(args []string) int {
-	opts, err := parseOptions(args, []string{"json"}, []string{"name"})
+	opts, err := parseOptions(args, []string{"json", "raw"}, []string{"name"})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "rename failed: %v\n", err)
-		printUsageWithCardExamples("rename", "uncut rename <card_id> <new_name> [--json]")
+		printUsageWithCardExamples("rename", "uncut rename <card_id> <new_name> [--raw|--json]")
 		return 2
 	}
 	if len(opts.positionals) < 1 || len(opts.positionals) > 2 {
-		printUsageWithCardExamples("rename", "uncut rename <card_id> <new_name> [--json]")
+		printUsageWithCardExamples("rename", "uncut rename <card_id> <new_name> [--raw|--json]")
+		return 2
+	}
+	if outputFlagsConflict(opts.bool("json"), opts.bool("raw"), "rename") {
 		return 2
 	}
 	cardID := opts.positionals[0]
@@ -899,7 +982,7 @@ func cmdRename(args []string) int {
 	}
 	if name == "" {
 		fmt.Fprintln(os.Stderr, "rename failed: new name is required")
-		printUsageWithCardExamples("rename", "uncut rename <card_id> <new_name> [--json]")
+		printUsageWithCardExamples("rename", "uncut rename <card_id> <new_name> [--raw|--json]")
 		return 2
 	}
 
@@ -917,19 +1000,26 @@ func cmdRename(args []string) int {
 		printRawJSON(raw)
 		return 0
 	}
+	if opts.bool("raw") {
+		printCardRaw(item)
+		return 0
+	}
 	printCard(item, false)
 	return 0
 }
 
 func cmdPhone(args []string) int {
-	opts, err := parseOptions(args, []string{"json"}, []string{"phone"})
+	opts, err := parseOptions(args, []string{"json", "raw"}, []string{"phone"})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "phone failed: %v\n", err)
-		printUsageWithCardExamples("phone", "uncut phone <card_id> --phone <e164_phone> [--json]")
+		printUsageWithCardExamples("phone", "uncut phone <card_id> --phone <e164_phone> [--raw|--json]")
 		return 2
 	}
 	if len(opts.positionals) < 1 || len(opts.positionals) > 2 {
-		printUsageWithCardExamples("phone", "uncut phone <card_id> --phone <e164_phone> [--json]")
+		printUsageWithCardExamples("phone", "uncut phone <card_id> --phone <e164_phone> [--raw|--json]")
+		return 2
+	}
+	if outputFlagsConflict(opts.bool("json"), opts.bool("raw"), "phone") {
 		return 2
 	}
 	cardID := opts.positionals[0]
@@ -939,7 +1029,7 @@ func cmdPhone(args []string) int {
 	}
 	if phone == "" {
 		fmt.Fprintln(os.Stderr, "phone failed: --phone is required")
-		printUsageWithCardExamples("phone", "uncut phone <card_id> --phone <e164_phone> [--json]")
+		printUsageWithCardExamples("phone", "uncut phone <card_id> --phone <e164_phone> [--raw|--json]")
 		return 2
 	}
 
@@ -957,20 +1047,24 @@ func cmdPhone(args []string) int {
 		printRawJSON(raw)
 		return 0
 	}
+	if opts.bool("raw") {
+		printCardRaw(item)
+		return 0
+	}
 	printCard(item, false)
 	return 0
 }
 
 func cmdFreeze(args []string) int {
-	return cmdCardStatusOperation(args, "freeze", "/cards/%s/freeze", "uncut freeze <card_id> [--json]")
+	return cmdCardStatusOperation(args, "freeze", "/cards/%s/freeze", "uncut freeze <card_id> [--raw|--json]")
 }
 
 func cmdUnfreeze(args []string) int {
-	return cmdCardStatusOperation(args, "unfreeze", "/cards/%s/unfreeze", "uncut unfreeze <card_id> [--json]")
+	return cmdCardStatusOperation(args, "unfreeze", "/cards/%s/unfreeze", "uncut unfreeze <card_id> [--raw|--json]")
 }
 
 func cmdCardStatusOperation(args []string, command string, pathFormat string, usage string) int {
-	opts, err := parseOptions(args, []string{"json"}, nil)
+	opts, err := parseOptions(args, []string{"json", "raw"}, nil)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s failed: %v\n", command, err)
 		printUsageWithCardExamples(command, usage)
@@ -978,6 +1072,9 @@ func cmdCardStatusOperation(args []string, command string, pathFormat string, us
 	}
 	if len(opts.positionals) != 1 {
 		printUsageWithCardExamples(command, usage)
+		return 2
+	}
+	if outputFlagsConflict(opts.bool("json"), opts.bool("raw"), command) {
 		return 2
 	}
 
@@ -995,19 +1092,26 @@ func cmdCardStatusOperation(args []string, command string, pathFormat string, us
 		printRawJSON(raw)
 		return 0
 	}
+	if opts.bool("raw") {
+		printCardRaw(item)
+		return 0
+	}
 	printCard(item, false)
 	return 0
 }
 
 func cmdDelete(args []string) int {
-	opts, err := parseOptions(args, []string{"yes", "json"}, nil)
+	opts, err := parseOptions(args, []string{"yes", "json", "raw"}, nil)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "delete failed: %v\n", err)
-		printUsageWithCardExamples("delete", "uncut delete <card_id> [--yes] [--json]")
+		printUsageWithCardExamples("delete", "uncut delete <card_id> [--yes] [--raw|--json]")
 		return 2
 	}
 	if len(opts.positionals) != 1 {
-		printUsageWithCardExamples("delete", "uncut delete <card_id> [--yes] [--json]")
+		printUsageWithCardExamples("delete", "uncut delete <card_id> [--yes] [--raw|--json]")
+		return 2
+	}
+	if outputFlagsConflict(opts.bool("json"), opts.bool("raw"), "delete") {
 		return 2
 	}
 	cardID := opts.positionals[0]
@@ -1038,18 +1142,25 @@ func cmdDelete(args []string) int {
 		printRawJSON(raw)
 		return 0
 	}
+	if opts.bool("raw") {
+		printDeleteResultRaw(result)
+		return 0
+	}
 	printDeleteResult(result)
 	return 0
 }
 
 func cmdOperation(args []string) int {
-	opts, err := parseOptions(args, []string{"json"}, nil)
+	opts, err := parseOptions(args, []string{"json", "raw"}, nil)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "operation failed: %v\n", err)
 		return 2
 	}
 	if len(opts.positionals) != 1 {
-		fmt.Fprintln(os.Stderr, "usage: uncut operation <operation_id> [--json]")
+		fmt.Fprintln(os.Stderr, "usage: uncut operation <operation_id> [--raw|--json]")
+		return 2
+	}
+	if outputFlagsConflict(opts.bool("json"), opts.bool("raw"), "operation") {
 		return 2
 	}
 
@@ -1067,18 +1178,25 @@ func cmdOperation(args []string) int {
 		printRawJSON(raw)
 		return 0
 	}
+	if opts.bool("raw") {
+		printOperationRaw(op)
+		return 0
+	}
 	printOperation(op)
 	return 0
 }
 
 func cmdWait(args []string) int {
-	opts, err := parseOptions(args, []string{"json"}, []string{"interval", "timeout"})
+	opts, err := parseOptions(args, []string{"json", "raw"}, []string{"interval", "timeout"})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "wait failed: %v\n", err)
 		return 2
 	}
 	if len(opts.positionals) != 1 {
-		fmt.Fprintln(os.Stderr, "usage: uncut wait <operation_id> [--interval <seconds>] [--timeout <seconds>] [--json]")
+		fmt.Fprintln(os.Stderr, "usage: uncut wait <operation_id> [--interval <seconds>] [--timeout <seconds>] [--raw|--json]")
+		return 2
+	}
+	if outputFlagsConflict(opts.bool("json"), opts.bool("raw"), "wait") {
 		return 2
 	}
 	waitOpts, err := waitOptionsFrom(opts)
@@ -1091,7 +1209,7 @@ func cmdWait(args []string) int {
 	if code != 0 {
 		return code
 	}
-	return waitForOperation(c, opts.positionals[0], waitOpts, opts.bool("json"))
+	return waitForOperation(c, opts.positionals[0], waitOpts, opts.bool("json"), opts.bool("raw"))
 }
 
 func cmdCards(args []string) int {
@@ -1099,11 +1217,15 @@ func cmdCards(args []string) int {
 	reveal := fs.Bool("reveal", false, "show full PAN/CVV")
 	full := fs.Bool("full", false, "alias for --reveal")
 	jsonOut := fs.Bool("json", false, "print JSON")
+	rawOut := fs.Bool("raw", false, "print tab-separated fields")
 	if err := fs.Parse(args); err != nil {
 		return 2
 	}
 	if fs.NArg() != 0 {
-		fmt.Fprintln(os.Stderr, "usage: uncut cards [--reveal|--full] [--json]")
+		fmt.Fprintln(os.Stderr, "usage: uncut cards [--reveal|--full] [--raw|--json]")
+		return 2
+	}
+	if outputFlagsConflict(*jsonOut, *rawOut, "cards") {
 		return 2
 	}
 
@@ -1123,6 +1245,10 @@ func cmdCards(args []string) int {
 			printRawJSON(raw)
 			return 0
 		}
+		if *rawOut {
+			printCardsRaw(cards)
+			return 0
+		}
 		printCards(cards, false)
 		return 0
 	}
@@ -1140,14 +1266,21 @@ func cmdCards(args []string) int {
 		printJSON(map[string]any{"data": details})
 		return 0
 	}
+	if *rawOut {
+		printCardsRaw(details)
+		return 0
+	}
 	printCards(details, true)
 	return 0
 }
 
 func cmdCard(args []string) int {
-	cardID, showFull, jsonOut, ok := parseCardArgs(args)
+	cardID, showFull, jsonOut, rawOut, ok := parseCardArgs(args)
 	if !ok {
-		printUsageWithCardExamples("card", "uncut card <card_id> [--reveal|--full] [--json]")
+		printUsageWithCardExamples("card", "uncut card <card_id> [--reveal|--full] [--raw|--json]")
+		return 2
+	}
+	if outputFlagsConflict(jsonOut, rawOut, "card") {
 		return 2
 	}
 	c, code := authedClient()
@@ -1169,29 +1302,35 @@ func cmdCard(args []string) int {
 		printRawJSON(raw)
 		return 0
 	}
+	if rawOut {
+		printCardRaw(item)
+		return 0
+	}
 	printCard(item, showFull)
 	return 0
 }
 
-func parseCardArgs(args []string) (cardID string, reveal bool, jsonOut bool, ok bool) {
+func parseCardArgs(args []string) (cardID string, reveal bool, jsonOut bool, rawOut bool, ok bool) {
 	for _, arg := range args {
 		switch arg {
 		case "--reveal", "--full":
 			reveal = true
 		case "--json":
 			jsonOut = true
+		case "--raw":
+			rawOut = true
 		default:
 			if strings.HasPrefix(arg, "-") {
 				fmt.Fprintf(os.Stderr, "unknown card option: %s\n", arg)
-				return "", false, false, false
+				return "", false, false, false, false
 			}
 			if cardID != "" {
-				return "", false, false, false
+				return "", false, false, false, false
 			}
 			cardID = arg
 		}
 	}
-	return cardID, reveal, jsonOut, cardID != ""
+	return cardID, reveal, jsonOut, rawOut, cardID != ""
 }
 
 type parsedOptions struct {
@@ -1206,6 +1345,11 @@ func (p parsedOptions) bool(name string) bool {
 
 func (p parsedOptions) value(name string) string {
 	return p.values[name]
+}
+
+func (p parsedOptions) hasValue(name string) bool {
+	_, ok := p.values[name]
+	return ok
 }
 
 func (p parsedOptions) valueDefault(name string, fallback string) string {
@@ -1270,6 +1414,24 @@ func parseOptions(args []string, boolFlags []string, valueFlags []string) (parse
 	}
 
 	return opts, nil
+}
+
+func newTopupInput(opts parsedOptions) (raw string, name string, ok bool) {
+	hasTopup := opts.hasValue("topup")
+	hasAmount := opts.hasValue("amount")
+	if hasTopup && hasAmount {
+		return "", "", false
+	}
+	if hasTopup {
+		return strings.TrimSpace(opts.value("topup")), "--topup", true
+	}
+	if hasAmount {
+		return strings.TrimSpace(opts.value("amount")), "--amount", true
+	}
+	if len(opts.positionals) == 2 {
+		return strings.TrimSpace(opts.positionals[1]), "--topup", true
+	}
+	return "", "", false
 }
 
 func parseBoolValue(value string) (bool, error) {
@@ -1491,7 +1653,7 @@ func fetchCardTransactions(c *client, cardID string, page int) ([]cardTransactio
 	return items, raw, env, err
 }
 
-func printAllWalletTransactions(c *client, jsonOut bool) int {
+func printAllWalletTransactions(c *client, jsonOut bool, rawOut bool) int {
 	var all []walletTransaction
 	page := 1
 	var lastEnv *envelope
@@ -1511,11 +1673,15 @@ func printAllWalletTransactions(c *client, jsonOut bool) int {
 		printJSON(map[string]any{"data": all})
 		return 0
 	}
+	if rawOut {
+		printWalletTransactionsRaw(all)
+		return 0
+	}
 	printWalletTransactions(all, lastEnv)
 	return 0
 }
 
-func printAllCardTransactions(c *client, cardID string, jsonOut bool) int {
+func printAllCardTransactions(c *client, cardID string, jsonOut bool, rawOut bool) int {
 	var all []cardTransaction
 	page := 1
 	var lastEnv *envelope
@@ -1533,6 +1699,10 @@ func printAllCardTransactions(c *client, cardID string, jsonOut bool) int {
 	}
 	if jsonOut {
 		printJSON(map[string]any{"data": all})
+		return 0
+	}
+	if rawOut {
+		printCardTransactionsRaw(all)
 		return 0
 	}
 	printCardTransactions(cardID, all, lastEnv)
@@ -1567,7 +1737,7 @@ func waitOptionsFrom(opts parsedOptions) (waitOptions, error) {
 	}, nil
 }
 
-func waitForOperation(c *client, operationID string, opts waitOptions, jsonOut bool) int {
+func waitForOperation(c *client, operationID string, opts waitOptions, jsonOut bool, rawOut bool) int {
 	if strings.TrimSpace(operationID) == "" {
 		fmt.Fprintln(os.Stderr, "wait failed: operation id is empty")
 		return 2
@@ -1583,6 +1753,8 @@ func waitForOperation(c *client, operationID string, opts waitOptions, jsonOut b
 		if status == "completed" || status == "error" {
 			if jsonOut {
 				printRawJSON(raw)
+			} else if rawOut {
+				printOperationRaw(op)
 			} else {
 				printOperation(op)
 			}
@@ -1591,7 +1763,7 @@ func waitForOperation(c *client, operationID string, opts waitOptions, jsonOut b
 			}
 			return 0
 		}
-		if !jsonOut {
+		if !jsonOut && !rawOut {
 			fmt.Printf("status: %s\n", fallback(op.Status, "pending"))
 		}
 		if time.Now().Add(opts.Interval).After(deadline) {
@@ -1830,7 +2002,7 @@ func printNewMissingBinHelp(items []cardBIN, generatedName string) {
 	fmt.Println("defaults:")
 	fmt.Printf("  name: %s\n", generatedName)
 	fmt.Println("  currency: USD")
-	fmt.Println("  topup: 0")
+	fmt.Println("  topup: required, must be > 0")
 	fmt.Println()
 	fmt.Println("copy-paste create commands:")
 	if len(items) == 0 {
@@ -1838,7 +2010,29 @@ func printNewMissingBinHelp(items []cardBIN, generatedName string) {
 		return
 	}
 	for _, item := range items {
-		fmt.Printf("  uncut new %s --name %s --wait\n", item.ID, shellQuote(generatedName))
+		fmt.Printf("  uncut new %s --name %s --topup 25 --wait\n", item.ID, shellQuote(generatedName))
+	}
+}
+
+func printNewAmountHelp(items []cardBIN, binID string, name string, currency string) {
+	fmt.Println("available bins:")
+	printBins(items)
+	fmt.Println()
+	fmt.Println("required:")
+	fmt.Println("  topup: positive amount, for example 25")
+	fmt.Println()
+	fmt.Println("copy-paste create commands:")
+	if binID != "" {
+		fmt.Printf("  uncut new %s --name %s --currency %s --topup 25 --wait\n", binID, shellQuote(name), currency)
+		fmt.Printf("  uncut new %s --name %s --currency %s --amount 25 --wait\n", binID, shellQuote(name), currency)
+		return
+	}
+	if len(items) == 0 {
+		fmt.Println("  no available BINs")
+		return
+	}
+	for _, item := range items {
+		fmt.Printf("  uncut new %s --name %s --currency %s --topup 25 --wait\n", item.ID, shellQuote(name), currency)
 	}
 }
 
@@ -1853,7 +2047,7 @@ func printHelpBINExamples() {
 	fmt.Println()
 	fmt.Println("Current BIN examples:")
 	for _, item := range bins {
-		fmt.Printf("  uncut new %s --name %s --wait\n", item.ID, shellQuote(name))
+		fmt.Printf("  uncut new %s --name %s --topup 25 --wait\n", item.ID, shellQuote(name))
 	}
 }
 
@@ -2089,6 +2283,145 @@ func printDeleteResult(result deleteResult) {
 	fmt.Println("card deleted")
 	fmt.Printf("returned: %s\n", formatAmountCurrency(result.ReturnedAmount, result.ReturnedCurrency))
 	fmt.Printf("wallet balance: %s\n", formatBalance(result.WalletBalance, "USDT"))
+}
+
+func outputFlagsConflict(jsonOut bool, rawOut bool, command string) bool {
+	if !jsonOut || !rawOut {
+		return false
+	}
+	fmt.Fprintf(os.Stderr, "%s failed: use either --raw or --json, not both\n", command)
+	return true
+}
+
+func printDepositAddressesRaw(items []depositAddress) {
+	for _, item := range items {
+		printRawFields(item.Chain, item.Token, item.Address)
+	}
+}
+
+func printBinsRaw(items []cardBIN) {
+	for _, item := range items {
+		printRawFields(
+			item.ID,
+			item.Name,
+			strconv.FormatBool(item.WalletSupport),
+			strings.Join(item.Currencies, ","),
+			rawNumber(item.Rates.CardIssueFee),
+			rawNumber(item.Rates.CardTopupPercent),
+			rawNumber(item.Rates.CardTopupFix),
+			rawNumber(item.Rates.CardAuthorizationPercent),
+			rawNumber(item.Rates.CardAuthorizationFix),
+			rawNumber(item.Rates.CardWithdrawPercent),
+			rawNumber(item.Rates.CardWithdrawFix),
+		)
+	}
+}
+
+func printCardsRaw(items []card) {
+	for _, item := range items {
+		printCardRaw(item)
+	}
+}
+
+func printCardRaw(item card) {
+	printRawFields(
+		item.ID,
+		item.Name,
+		item.Mask,
+		item.CardNumber,
+		item.ExpirationDate,
+		item.CVV,
+		item.Currency,
+		rawNumber(item.Balance),
+		item.Status,
+		item.ExpireMonth,
+		item.ExpireYear,
+		item.Phone3DS,
+		item.CreatedAt,
+	)
+}
+
+func printQueuedOperationRaw(item queuedOperation) {
+	printRawFields(item.OperationID, fallback(item.Status, "new"))
+}
+
+func printOperationRaw(item operation) {
+	printRawFields(
+		item.OperationID,
+		item.Type,
+		item.Status,
+		rawNumber(item.Amount),
+		item.CardID,
+		item.CreatedAt,
+		item.UpdatedAt,
+		item.ErrorMessage,
+	)
+}
+
+func printCardTransactionsRaw(items []cardTransaction) {
+	for _, item := range items {
+		printRawFields(
+			item.Time,
+			item.Type,
+			item.MerchantName,
+			item.MerchantCountry,
+			rawNumber(item.OriginalAmount),
+			item.OriginalCurrency,
+			rawNumber(item.PreAuthAmount),
+			rawNumber(item.PostedAmount),
+		)
+	}
+}
+
+func printWalletTransactionsRaw(items []walletTransaction) {
+	for _, item := range items {
+		printRawFields(
+			item.ID,
+			item.Type,
+			item.Status,
+			rawNumber(item.Amount),
+			rawNumber(item.Fee),
+			rawOptionalString(item.CardID),
+			rawOptionalString(item.Comment),
+			item.CreatedAt,
+		)
+	}
+}
+
+func printDeleteResultRaw(result deleteResult) {
+	printRawFields(
+		rawNumber(result.ReturnedAmount),
+		result.ReturnedCurrency,
+		rawNumber(result.WalletBalance),
+	)
+}
+
+func printRawFields(fields ...string) {
+	for i, field := range fields {
+		if i > 0 {
+			fmt.Print("\t")
+		}
+		fmt.Print(rawString(field))
+	}
+	fmt.Println()
+}
+
+func rawString(value string) string {
+	value = strings.ReplaceAll(value, "\t", " ")
+	value = strings.ReplaceAll(value, "\r", " ")
+	value = strings.ReplaceAll(value, "\n", " ")
+	return strings.TrimSpace(value)
+}
+
+func rawNumber(value json.Number) string {
+	return strings.TrimSpace(value.String())
+}
+
+func rawOptionalString(value *string) string {
+	if value == nil {
+		return ""
+	}
+	return *value
 }
 
 func formatMask(mask string) string {
@@ -2335,7 +2668,7 @@ func apiErrorHint(err *apiError) string {
 	case "validation_failed":
 		return "check required flags and value formats; use `uncut` for command examples"
 	case "insufficient_balance":
-		return "run `uncut balance`; create with `--topup 0` or fund the wallet with `uncut deposit`"
+		return "run `uncut balance`; lower --topup/--amount or fund the wallet with `uncut deposit`"
 	case "insufficient_card_balance":
 		return "run `uncut card <card_id>` and choose a smaller withdraw amount"
 	case "invalid_phone":

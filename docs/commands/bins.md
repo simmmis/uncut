@@ -7,7 +7,7 @@ List available card BINs, supported currencies, and fees.
 ## Synopsis
 
 ```sh
-uncut bins [--json]
+uncut bins [--raw|--json]
 ```
 
 ## API Mapping
@@ -20,6 +20,7 @@ GET /card-bins
 
 | Flag | Required | Description |
 |---|---|---|
+| `--raw` | no | Print tab-separated fields without a header |
 | `--json` | no | Print raw API JSON |
 
 ## Examples
@@ -34,6 +35,12 @@ Use JSON for scripts:
 
 ```sh
 uncut bins --json
+```
+
+Use TSV for shell scripts:
+
+```sh
+uncut bins --raw
 ```
 
 Get create-card examples using current BINs:
@@ -60,6 +67,12 @@ bin_demo_sg  SG 559268 ($0.5 auth fee)   USD         2.00 USDT  0.00%  0.00% + 0
 | `auth` | Purchase/authorization fee |
 | `withdraw` | Card withdrawal fee |
 | `wallet` | Apple Pay / Google Pay / 3DS support |
+
+Raw columns:
+
+```text
+id	name	wallet_support	currencies	issue_fee	topup_percent	topup_fixed	auth_percent	auth_fixed	withdraw_percent	withdraw_fixed
+```
 
 ## Errors
 

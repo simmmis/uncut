@@ -7,7 +7,7 @@ Show the current wallet balance.
 ## Synopsis
 
 ```sh
-uncut balance [--json]
+uncut balance [--raw|--json]
 ```
 
 ## API Mapping
@@ -20,6 +20,7 @@ GET /wallet
 
 | Flag | Required | Description |
 |---|---|---|
+| `--raw` | no | Print only the numeric balance, exactly as a script-friendly number |
 | `--json` | no | Print raw API JSON |
 
 ## Examples
@@ -36,12 +37,24 @@ Script-friendly JSON:
 uncut balance --json
 ```
 
+Script-friendly number:
+
+```sh
+uncut balance --raw
+```
+
 ## Output
 
 Text:
 
 ```text
 Balance: 24.00 USDT
+```
+
+Raw:
+
+```text
+24
 ```
 
 JSON:

@@ -7,7 +7,7 @@ Show card transaction history, newest first.
 ## Synopsis
 
 ```sh
-uncut transactions <card_id> [--page <n>|--all] [--json]
+uncut transactions <card_id> [--page <n>|--all] [--raw|--json]
 ```
 
 ## API Mapping
@@ -23,6 +23,7 @@ GET /cards/{card_id}/transactions?page=<n>
 | `<card_id>` | yes | Card id |
 | `--page <n>` | no | Page number, default `1` |
 | `--all` | no | Fetch all pages |
+| `--raw` | no | Print tab-separated rows without pagination text |
 | `--json` | no | Print raw API JSON |
 
 ## Examples
@@ -37,6 +38,12 @@ Show page 2:
 
 ```sh
 uncut transactions card_demo_primary --page 2
+```
+
+Use TSV for scripts:
+
+```sh
+uncut transactions card_demo_primary --raw
 ```
 
 Ask the CLI for examples using current cards:
@@ -64,6 +71,12 @@ If more pages exist:
 
 ```text
 next: uncut transactions <card_id> --page 2
+```
+
+Raw columns:
+
+```text
+time	type	merchant_name	merchant_country	original_amount	original_currency	pre_auth_amount	posted_amount
 ```
 
 ## Errors

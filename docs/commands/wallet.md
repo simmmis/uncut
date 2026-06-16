@@ -7,7 +7,7 @@ Show wallet transaction history, newest first.
 ## Synopsis
 
 ```sh
-uncut wallet [--page <n>|--all] [--json]
+uncut wallet [--page <n>|--all] [--raw|--json]
 ```
 
 ## API Mapping
@@ -22,6 +22,7 @@ GET /wallet/transactions?page=<n>
 |---|---|---|
 | `--page <n>` | no | Page number, default `1` |
 | `--all` | no | Fetch all pages until `has_more=false` |
+| `--raw` | no | Print tab-separated rows without pagination text |
 | `--json` | no | Print raw API JSON |
 
 ## Examples
@@ -44,6 +45,12 @@ Fetch every page:
 uncut wallet --all
 ```
 
+Use TSV for scripts:
+
+```sh
+uncut wallet --raw
+```
+
 ## Output
 
 ```text
@@ -61,6 +68,12 @@ If more pages exist:
 
 ```text
 next: uncut wallet --page 2
+```
+
+Raw columns:
+
+```text
+id	type	status	amount	fee	card_id	comment	created_at
 ```
 
 ## Errors

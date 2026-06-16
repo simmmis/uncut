@@ -7,7 +7,7 @@ Rename a card's local label.
 ## Synopsis
 
 ```sh
-uncut rename <card_id> <new_name> [--json]
+uncut rename <card_id> <new_name> [--raw|--json]
 ```
 
 Alternative:
@@ -29,6 +29,7 @@ PATCH /cards/{card_id}
 | `<card_id>` | yes | path | Card id |
 | `<new_name>` | yes | `name` | New local card label |
 | `--name <name>` | alternative | `name` | Long-form name |
+| `--raw` | no | local | Print updated card as one TSV row |
 | `--json` | no | local | Print JSON |
 
 ## Examples
@@ -51,6 +52,12 @@ Ask the CLI for examples using current cards:
 uncut help rename
 ```
 
+Use TSV:
+
+```sh
+uncut rename card_demo_primary 'Facebook Ads' --raw
+```
+
 ## Output
 
 Updated safe card output:
@@ -61,6 +68,12 @@ id: card_demo_ads
 💳 **** **** **** 4242
 EXP:**/**  CVV:***  Active
 Balance: $25.00
+```
+
+Raw columns are the same as `uncut card --raw`:
+
+```text
+id	name	mask	card_number	expiration_date	cvv	currency	balance	status	expire_month	expire_year	phone_3ds	created_at
 ```
 
 ## Errors

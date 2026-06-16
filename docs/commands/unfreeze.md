@@ -7,7 +7,7 @@ Unfreeze a frozen card so it can be charged again.
 ## Synopsis
 
 ```sh
-uncut unfreeze <card_id> [--json]
+uncut unfreeze <card_id> [--raw|--json]
 ```
 
 ## API Mapping
@@ -21,6 +21,7 @@ POST /cards/{card_id}/unfreeze
 | Argument / Flag | Required | Description |
 |---|---|---|
 | `<card_id>` | yes | Card id; card must be frozen |
+| `--raw` | no | Print updated card as one TSV row |
 | `--json` | no | Print JSON |
 
 ## Examples
@@ -37,9 +38,17 @@ Ask the CLI for examples using current cards:
 uncut help unfreeze
 ```
 
+Use TSV:
+
+```sh
+uncut unfreeze card_demo_primary --raw
+```
+
 ## Output
 
 Updated card with status `Active`.
+
+Raw columns are the same as `uncut card --raw`.
 
 ## Errors
 

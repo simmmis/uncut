@@ -88,8 +88,9 @@ next: uncut wallet --page 2
 
 ```sh
 uncut bins
-uncut new <bin_id>
-uncut new <bin_id> --wait
+uncut new <bin_id> --topup 25
+uncut new <bin_id> --topup 25 --wait
+uncut new <bin_id> --amount 25 --wait
 uncut new <bin_id> --name "Facebook Ads" --currency USD --topup 25
 uncut new <bin_id> --name "Facebook Ads" --currency USD --topup 25 --3ds --phone +10000000000
 ```
@@ -100,12 +101,12 @@ Defaults:
 |---|---|
 | `--name` | `card-YYYYMMDD-HHMM` |
 | `--currency` | `USD` |
-| `--topup` | `0` |
+| `--topup` | required, positive number |
 
 `--bin <bin_id>` is still supported, but the shorter form is:
 
 ```sh
-uncut new <bin_id>
+uncut new <bin_id> --topup 25
 ```
 
 If the BIN is missing, `uncut new` fails and prints available BINs with prices
@@ -120,10 +121,10 @@ available bins:
 defaults:
   name: card-20260613-1420
   currency: USD
-  topup: 0
+  topup: required, must be > 0
 
 copy-paste create commands:
-  uncut new 01... --name 'card-20260613-1420' --wait
+  uncut new 01... --name 'card-20260613-1420' --topup 25 --wait
 ```
 
 Before creating a card, `uncut new` also checks existing cards and refuses
@@ -132,7 +133,7 @@ duplicate names:
 ```text
 new failed: card name must be unique; "Facebook Ads" already exists
 existing card: card_demo_ads
-try: uncut new 01... --name 'Facebook Ads-2' --currency USD --topup 0 --wait
+try: uncut new 01... --name 'Facebook Ads-2' --currency USD --topup 25 --wait
 ```
 
 ## Cards
@@ -243,6 +244,19 @@ API commands support:
 ```
 
 `--json` prints machine-readable JSON without decorative formatting.
+
+## Raw mode
+
+API commands support:
+
+```sh
+--raw
+```
+
+`--raw` prints shell-friendly values. `uncut balance --raw` prints a single
+number exactly as returned by the API, for example `49.3`. List and object
+commands print tab-separated rows without a header. Command-specific manuals in
+`docs/commands/` define the columns.
 
 ## Command manuals
 

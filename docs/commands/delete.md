@@ -7,7 +7,7 @@ Close a card permanently and refund remaining balance to wallet.
 ## Synopsis
 
 ```sh
-uncut delete <card_id> [--yes] [--json]
+uncut delete <card_id> [--yes] [--raw|--json]
 ```
 
 ## API Mapping
@@ -22,6 +22,7 @@ DELETE /cards/{card_id}
 |---|---|---|
 | `<card_id>` | yes | Card id |
 | `--yes` | no | Skip interactive confirmation |
+| `--raw` | no | Print tab-separated refund fields |
 | `--json` | no | Print JSON |
 
 ## Examples
@@ -36,6 +37,12 @@ Delete without prompt:
 
 ```sh
 uncut delete card_demo_primary --yes
+```
+
+Use TSV:
+
+```sh
+uncut delete card_demo_primary --yes --raw
 ```
 
 Ask the CLI for examples using current cards:
@@ -60,6 +67,12 @@ Only the exact word `delete` confirms.
 card deleted
 returned: $25.00
 wallet balance: 270.50 USDT
+```
+
+Raw columns:
+
+```text
+returned_amount	returned_currency	wallet_balance
 ```
 
 ## Errors

@@ -7,7 +7,7 @@ Move funds from wallet to a card. This is asynchronous.
 ## Synopsis
 
 ```sh
-uncut topup <card_id> --amount <amount> [--wait] [--json]
+uncut topup <card_id> --amount <amount> [--wait] [--raw|--json]
 ```
 
 Positional amount is also accepted:
@@ -29,6 +29,7 @@ POST /cards/{card_id}/topup
 | `<card_id>` | yes | path | Card id |
 | `--amount <amount>` | yes | `amount` | Amount in USDT, must be `> 0` |
 | `--wait` | no | local | Poll operation until terminal status |
+| `--raw` | no | local | Print TSV operation fields |
 | `--json` | no | local | Print JSON |
 
 ## Examples
@@ -67,6 +68,17 @@ status: new
 Card top-up queued. Poll GET /api/v1/operations/{operation_id} until status is "completed".
 next: uncut wait op_demo_topup
 ```
+
+Raw output without `--wait`:
+
+```text
+op_demo_topup	new
+```
+
+Raw columns without `--wait`: `operation_id`, `status`.
+
+With `--wait --raw`, columns are `operation_id`, `type`, `status`, `amount`,
+`card_id`, `created_at`, `updated_at`, `error_message`.
 
 ## Errors
 

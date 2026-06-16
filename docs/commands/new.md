@@ -7,13 +7,13 @@ Create a new virtual card. This is an asynchronous operation.
 ## Synopsis
 
 ```sh
-uncut new <bin_id> [--name <name>] [--currency <code>] [--topup <amount>] [--3ds --phone <phone>] [--wait] [--json]
+uncut new <bin_id> --topup <amount> [--name <name>] [--currency <code>] [--3ds --phone <phone>] [--wait] [--raw|--json]
 ```
 
 Equivalent long form:
 
 ```sh
-uncut new --bin <bin_id> [--name <name>] [--currency <code>] [--topup <amount>]
+uncut new --bin <bin_id> --topup <amount> [--name <name>] [--currency <code>]
 ```
 
 ## API Mapping
@@ -31,7 +31,7 @@ GET /cards
 |---|---|
 | `--name` | `card-YYYYMMDD-HHMM` |
 | `--currency` | `USD` |
-| `--topup` | `0` |
+| `--topup` | required, no default |
 
 ## Input
 
@@ -41,10 +41,12 @@ GET /cards
 | `--bin <bin_id>` | alternative | `bin_id` | Long-form BIN input |
 | `--name <name>` | no | `name` | Local card label, must be unique |
 | `--currency <code>` | no | `currency` | Card currency |
-| `--topup <amount>` | no | `topup_amount` | Initial balance, `0` allowed |
+| `--topup <amount>` | yes | `topup_amount` | Initial balance, must be `> 0` |
+| `--amount <amount>` | alternative | `topup_amount` | Alias for `--topup` |
 | `--3ds` | no | `enable_3ds` | Enable 3DS SMS confirmations |
 | `--phone <phone>` | if `--3ds` | `phone` | E.164 phone, e.g. `+10000000000` |
 | `--wait` | no | local | Poll operation until terminal status |
+| `--raw` | no | local | Print TSV: operation fields without decoration |
 | `--json` | no | local | Print JSON |
 
 ## Examples
@@ -55,22 +57,22 @@ Show available BINs and ready create commands:
 uncut new
 ```
 
-Create a zero-balance card with defaults:
+Create a card with defaults and a required initial top-up:
 
 ```sh
-uncut new bin_demo_sg --wait
+uncut new bin_demo_sg --topup 25 --wait
 ```
 
-Create a named zero-balance card:
+Create a named card:
 
 ```sh
-uncut new bin_demo_sg --name 'Facebook Ads' --wait
+uncut new bin_demo_sg --name 'Facebook Ads' --topup 25 --wait
 ```
 
-Create a card with initial balance:
+Equivalent alias:
 
 ```sh
-uncut new bin_demo_sg --name 'Google Ads' --currency USD --topup 25 --wait
+uncut new bin_demo_sg --name 'Google Ads' --currency USD --amount 25 --wait
 ```
 
 Ask the CLI for current real BIN examples:
@@ -92,6 +94,23 @@ next: uncut wait op_demo_create
 
 With `--wait`, final operation status is printed.
 
+Raw output without `--wait`:
+
+```text
+op_demo_create	new
+```
+
+Raw output with `--wait`:
+
+```text
+op_demo_create	card_issue	completed	-27	card_demo_ads	2026-06-11T10:00:00+00:00	2026-06-11T10:00:40+00:00	
+```
+
+Raw columns without `--wait`: `operation_id`, `status`.
+
+Raw columns with `--wait`: `operation_id`, `type`, `status`, `amount`,
+`card_id`, `created_at`, `updated_at`, `error_message`.
+
 ## Missing BIN Helper
 
 If no BIN is supplied:
@@ -104,7 +123,7 @@ The command prints available BINs, defaults, and copy-paste commands:
 
 ```text
 copy-paste create commands:
-  uncut new bin_demo_sg --name 'card-20260613-1420' --wait
+  uncut new bin_demo_sg --name 'card-20260613-1420' --topup 25 --wait
 ```
 
 ## Duplicate Name Error
@@ -115,7 +134,7 @@ whitespace.
 ```text
 new failed: card name must be unique; "Facebook Ads" already exists
 existing card: card_demo_ads
-try: uncut new bin_demo_sg --name 'Facebook Ads-2' --currency USD --topup 0 --wait
+try: uncut new bin_demo_sg --name 'Facebook Ads-2' --currency USD --topup 25 --wait
 ```
 
 ## Common Errors
@@ -123,5 +142,6 @@ try: uncut new bin_demo_sg --name 'Facebook Ads-2' --currency USD --topup 0 --wa
 - `invalid_bin`: run `uncut bins`.
 - `unsupported_currency`: choose a currency listed by `uncut bins`.
 - `insufficient_balance`: lower `--topup` or fund with `uncut deposit`.
+- Missing `--topup`: pass a positive amount, for example `--topup 25`.
 - `enable_3ds_unsupported`: choose a BIN with `wallet` = `yes`.
 - `invalid_phone`: use E.164 format.

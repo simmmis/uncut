@@ -7,7 +7,7 @@ Update the 3DS phone number for a card.
 ## Synopsis
 
 ```sh
-uncut phone <card_id> --phone <e164_phone> [--json]
+uncut phone <card_id> --phone <e164_phone> [--raw|--json]
 ```
 
 Positional phone is also accepted:
@@ -28,6 +28,7 @@ PUT /cards/{card_id}/3ds-phone
 |---|---|---|---|
 | `<card_id>` | yes | path | Card id |
 | `--phone <phone>` | yes | `phone` | E.164 phone number |
+| `--raw` | no | local | Print updated card as one TSV row |
 | `--json` | no | local | Print JSON |
 
 ## Examples
@@ -50,9 +51,17 @@ Ask the CLI for examples using current cards:
 uncut help phone
 ```
 
+Use TSV:
+
+```sh
+uncut phone card_demo_primary --phone +10000000000 --raw
+```
+
 ## Output
 
 Updated safe card output.
+
+Raw columns are the same as `uncut card --raw`.
 
 ## Errors
 

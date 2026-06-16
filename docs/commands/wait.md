@@ -7,7 +7,7 @@ Poll an asynchronous operation until it is completed, failed, or timed out.
 ## Synopsis
 
 ```sh
-uncut wait <operation_id> [--interval <seconds>] [--timeout <seconds>] [--json]
+uncut wait <operation_id> [--interval <seconds>] [--timeout <seconds>] [--raw|--json]
 ```
 
 ## API Mapping
@@ -23,6 +23,7 @@ GET /operations/{operation_id}
 | `<operation_id>` | yes | - | Operation id |
 | `--interval <seconds>` | no | `3` | Poll interval; positive integer |
 | `--timeout <seconds>` | no | `120` | Max wait time; positive integer |
+| `--raw` | no | false | Print only the final tab-separated operation row |
 | `--json` | no | false | Print final status JSON |
 
 ## Examples
@@ -45,6 +46,12 @@ Typical `topup --wait` already calls this internally:
 uncut topup card_demo_primary --amount 60 --wait
 ```
 
+Use TSV for scripts:
+
+```sh
+uncut wait op_demo_topup --raw
+```
+
 ## Output
 
 While waiting:
@@ -61,6 +68,12 @@ operation: op_demo_create
 type: card_issue
 status: completed
 card: card_demo_ads
+```
+
+Raw columns:
+
+```text
+operation_id	type	status	amount	card_id	created_at	updated_at	error_message
 ```
 
 ## Errors

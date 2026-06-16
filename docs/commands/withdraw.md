@@ -7,7 +7,7 @@ Move funds from a card back to wallet. This is asynchronous.
 ## Synopsis
 
 ```sh
-uncut withdraw <card_id> --amount <amount> [--wait] [--json]
+uncut withdraw <card_id> --amount <amount> [--wait] [--raw|--json]
 ```
 
 Positional amount is also accepted:
@@ -29,6 +29,7 @@ POST /cards/{card_id}/withdraw
 | `<card_id>` | yes | path | Card id |
 | `--amount <amount>` | yes | `amount` | Amount in card currency, must be `> 0` |
 | `--wait` | no | local | Poll operation until terminal status |
+| `--raw` | no | local | Print TSV operation fields |
 | `--json` | no | local | Print JSON |
 
 ## Examples
@@ -59,6 +60,17 @@ status: new
 Card withdrawal queued. Poll GET /api/v1/operations/{operation_id} until status is "completed".
 next: uncut wait op_demo_withdraw
 ```
+
+Raw output without `--wait`:
+
+```text
+op_demo_withdraw	new
+```
+
+Raw columns without `--wait`: `operation_id`, `status`.
+
+With `--wait --raw`, columns are `operation_id`, `type`, `status`, `amount`,
+`card_id`, `created_at`, `updated_at`, `error_message`.
 
 ## Errors
 

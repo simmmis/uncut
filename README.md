@@ -83,10 +83,10 @@ Show available BINs and fees:
 uncut bins
 ```
 
-Create a zero-balance card:
+Create a card with an initial top-up:
 
 ```sh
-uncut new <bin_id> --wait
+uncut new <bin_id> --topup 25 --wait
 ```
 
 If you do not know the BIN:
@@ -205,6 +205,20 @@ uncut cards --json
 `--json` is intended for scripts and agents. It prints API JSON without
 decorative formatting.
 
+## Raw Mode
+
+Most API commands also support:
+
+```sh
+uncut balance --raw
+uncut cards --raw
+uncut card <card_id> --raw
+```
+
+`--raw` prints shell-friendly values without symbols or labels. `balance --raw`
+prints only the numeric balance, for example `49.3`. List/object commands print
+tab-separated rows without a header; each command manual documents its columns.
+
 ## Error Handling
 
 `uncut` prints structured, actionable errors:
@@ -214,7 +228,7 @@ error: wallet balance is too low
 message: Wallet balance is lower than required amount
 code: insufficient_balance
 http: 422
-hint: run `uncut balance`; create with `--topup 0` or fund the wallet with `uncut deposit`
+hint: run `uncut balance`; lower --topup/--amount or fund the wallet with `uncut deposit`
 ```
 
 See [docs/ERRORS.md](docs/ERRORS.md).

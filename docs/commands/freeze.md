@@ -7,7 +7,7 @@ Freeze an active card so new charges are declined.
 ## Synopsis
 
 ```sh
-uncut freeze <card_id> [--json]
+uncut freeze <card_id> [--raw|--json]
 ```
 
 ## API Mapping
@@ -21,6 +21,7 @@ POST /cards/{card_id}/freeze
 | Argument / Flag | Required | Description |
 |---|---|---|
 | `<card_id>` | yes | Card id; card must be active |
+| `--raw` | no | Print updated card as one TSV row |
 | `--json` | no | Print JSON |
 
 ## Examples
@@ -37,9 +38,17 @@ Ask the CLI for examples using current cards:
 uncut help freeze
 ```
 
+Use TSV:
+
+```sh
+uncut freeze card_demo_primary --raw
+```
+
 ## Output
 
 Updated card with status `Frozen`.
+
+Raw columns are the same as `uncut card --raw`.
 
 ## Errors
 

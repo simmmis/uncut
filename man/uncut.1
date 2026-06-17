@@ -1,4 +1,4 @@
-.TH UNCUT 1 "June 16, 2026" "uncut 0.1.2" "User Commands"
+.TH UNCUT 1 "June 17, 2026" "uncut 0.1.3" "User Commands"
 .SH NAME
 uncut \- standalone console client for the Uncutt Cards API
 .SH SYNOPSIS
@@ -33,6 +33,24 @@ runtime packages.
 .PP
 There is no compiled default API endpoint. The first login prompts for both an
 API key and an API endpoint. Both values are private local configuration.
+.SH INSTALLATION
+Install with Homebrew using one command:
+.nf
+brew install simmmis/tap/uncut
+.fi
+.PP
+That is the full install command. Homebrew pulls the tap automatically; a
+separate
+.B brew tap
+command is not needed.
+.PP
+To share
+.B uncut
+with another person or automation agent, send the install command and the
+repository link:
+.nf
+https://github.com/simmmis/uncut
+.fi
 .SH FIRST RUN
 .nf
 uncut login
@@ -245,6 +263,16 @@ Local config file containing the saved API key and endpoint.
 .TP
 .B $(brew --prefix uncut)/share/doc/uncut
 Markdown documentation installed by Homebrew.
+.SH ONLINE
+.TP
+.B Repository
+https://github.com/simmmis/uncut
+.TP
+.B Releases
+https://github.com/simmmis/uncut/releases
+.TP
+.B Homebrew tap
+https://github.com/simmmis/homebrew-tap
 .SH EXIT STATUS
 .TP
 .B 0

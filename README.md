@@ -8,11 +8,14 @@ are required.
 
 ## Quick Start
 
-Install with Homebrew:
+Install with Homebrew using one command:
 
 ```sh
 brew install simmmis/tap/uncut
 ```
+
+That is the full install command. Do not run a separate `brew tap` command;
+Homebrew pulls the tap automatically.
 
 After installation, `uncut` is available from any new terminal where Homebrew is
 on `PATH`:
@@ -22,6 +25,21 @@ uncut --version
 uncut login
 uncut balance
 ```
+
+## Share
+
+To share `uncut` with a teammate, friend, or automation agent, send this install
+command:
+
+```sh
+brew install simmmis/tap/uncut
+```
+
+Useful links:
+
+- Repository: <https://github.com/simmmis/uncut>
+- Releases: <https://github.com/simmmis/uncut/releases>
+- Homebrew tap: <https://github.com/simmmis/homebrew-tap>
 
 From this repository:
 
@@ -224,6 +242,12 @@ Homebrew installs the system man page and markdown docs:
 ```sh
 man uncut
 ls "$(brew --prefix uncut)/share/doc/uncut"
+```
+
+Online docs are available in the public repository:
+
+```text
+https://github.com/simmmis/uncut
 ```
 
 ## JSON Mode

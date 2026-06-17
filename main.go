@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	version = "0.1.2"
+	version = "0.1.3"
 )
 
 //go:embed README.md METHODS.md docs/ERRORS.md docs/commands/*.md man/uncut.1
@@ -428,6 +428,13 @@ What this is:
   It does not require Node.js, npm, curl, Go, or any runtime dependency.
   It calls the API directly and stores only local auth configuration.
 
+Install or share:
+  brew install simmmis/tap/uncut
+
+That is the full Homebrew install command. Homebrew pulls the tap automatically.
+To share uncut with another person or agent, send that command plus:
+  https://github.com/simmmis/uncut
+
 First run:
   uncut login
 
@@ -498,6 +505,11 @@ Get more documentation:
   uncut man                 Full standalone manual.
   man uncut                 System man page when installed by Homebrew/package.
 
+Online:
+  Repository: https://github.com/simmmis/uncut
+  Releases:   https://github.com/simmmis/uncut/releases
+  Tap:        https://github.com/simmmis/homebrew-tap
+
 Examples:
   uncut help new
   uncut help topup
@@ -522,6 +534,10 @@ Examples:
 
 Installed Homebrew packages also place markdown docs under:
   $(brew --prefix uncut)/share/doc/uncut
+
+Online docs and releases:
+  https://github.com/simmmis/uncut
+  https://github.com/simmmis/uncut/releases
 `
 
 const docsIndexText = `
@@ -563,6 +579,13 @@ Examples:
   uncut docs topup
   uncut docs errors
   uncut docs man
+
+Install/share:
+  brew install simmmis/tap/uncut
+
+Online:
+  https://github.com/simmmis/uncut
+  https://github.com/simmmis/homebrew-tap
 `
 
 const manText = `
@@ -584,6 +607,14 @@ DESCRIPTION
 
   The binary has no compiled default API endpoint. Login asks for both an API
   key and an API endpoint. The endpoint is private account configuration.
+
+INSTALLATION
+  brew install simmmis/tap/uncut
+
+  That is the full Homebrew install command. Homebrew pulls the tap
+  automatically. To share uncut with a teammate, friend, or automation agent,
+  send the install command and the repository link:
+    https://github.com/simmmis/uncut
 
 FIRST RUN
   uncut login
@@ -726,6 +757,16 @@ ENVIRONMENT
 FILES
   ~/.config/uncut/config.json
     Local API key and endpoint config.
+
+ONLINE
+  Repository:
+    https://github.com/simmmis/uncut
+
+  Releases:
+    https://github.com/simmmis/uncut/releases
+
+  Homebrew tap:
+    https://github.com/simmmis/homebrew-tap
 
 EXIT STATUS
   0  Success
